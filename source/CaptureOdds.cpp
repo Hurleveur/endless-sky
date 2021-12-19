@@ -107,6 +107,19 @@ double CaptureOdds::DefenderPower(int defendingCrew) const
 
 
 
+// We know the stronger weapon is the last used one.
+const Outfit *CaptureOdds::LastUsedWeapon(const Ship &ship, bool isDefender) const
+{
+	const string attribute = (isDefender ? "capture defense" : "capture attack");
+	const Outfit *best;
+	for(const auto &it : ship.Outfits())
+		if((!best || it.first->Get(attribute) > best->Get(attribute)) && it.second > 0)
+			best = it.first;
+	return best;
+}
+
+
+
 // Generate the lookup tables.
 void CaptureOdds::Calculate()
 {
@@ -195,17 +208,4 @@ vector<double> CaptureOdds::Power(const Ship &ship, bool isDefender)
 		power[i] += power[i - 1] + crewPower;
 	
 	return power;
-}
-
-
-
-// We know the stronger weapon is the last used one.
-const Outfit *CaptureOdds::LastUsedWeapon(const Ship &ship, bool isDefender) const
-{
-	const string attribute = (isDefender ? "capture defense" : "capture attack");
-	const Outfit *best;
-	for(const auto &it : ship.Outfits())
-		if((!best || it.first->Get(attribute) > best->Get(attribute)) && it.second > 0)
-			best = it.first;
-	return best;
 }

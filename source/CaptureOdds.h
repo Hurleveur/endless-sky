@@ -46,6 +46,8 @@ public:
 	// weapons) for each ship when they have the given number of crew remaining.
 	double AttackerPower(int attackingCrew) const;
 	double DefenderPower(int defendingCrew) const;
+	// Returns the name of the last used weapon.
+	const Outfit *LastUsedWeapon(const Ship &ship, bool isDefender) const;
 	
 	
 private:
@@ -57,8 +59,6 @@ private:
 	// Calculate attack or defense power for each number of crew members up to
 	// the given ship's full complement.
 	static std::vector<double> Power(const Ship &ship, bool isDefender);
-	// Returns the name of the last used weapon.
-	const Outfit *LastUsedWeapon(const Ship &ship, bool isDefender) const;
 	
 private:
 	// Attacker and defender power lookup tables.

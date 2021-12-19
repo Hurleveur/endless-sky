@@ -206,11 +206,11 @@ void BoardingPanel::Draw()
 			Round(defenseOdds.DefenderCasualties(vCrew, crew)));
 		int corridor = victim->Attributes().Get("corridors");
 		int layout = victim->Attributes().Get("design layout");
-		combatWidth = corridor ? corridor : victim->RequiredCrew() / 20 * layout ? layout : 
+		combatWidth = (corridor ? corridor : victim->RequiredCrew() / 20) * (layout ? layout : 
 			victim->Attributes().Category() == "Transport" ? 2. : 
 			(victim->Attributes().Category() == "Light Freighter" || 
-			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5;
-		info.SetString("fighting space", combatWidth);
+			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
+		info.SetString("fighting space", Round(combatWidth));
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
@@ -366,14 +366,14 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					const Outfit* last = nullptr;
 					if(youAttack)
 					{
-						last = attackOdds.LastUsedWeapon(you, false);
-						if(last && last->Attributes("consumable"))
+						last = attackOdds.LastUsedWeapon(*you, false);
+						if(last && last->Attributes().Get("consumable"))
 							you->AddOutfit(last, -1);
 					}
 					else if(enemyAttacks)
 					{
-						last = defenseOdds.LastUsedWeapon(you, true);
-						if(last && last->Attributes("Boarding Defence"))
+						last = defenseOdds.LastUsedWeapon(*you, true);
+						if(last && last->Attributes().Get("Boarding Defence"))
 							you->AddOutfit(last, -1);
 					}
 					you->AddCrew(-1);
@@ -383,14 +383,14 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					const Outfit* last = nullptr;
 					if(enemyAttacks)
 					{
-						last = attackOdds.LastUsedWeapon(victim, false);
-						if(last && last->Attributes("consumable"))
+						last = attackOdds.LastUsedWeapon(*victim, false);
+						if(last && last->Attributes().Get("consumable"))
 							you->AddOutfit(last, -1);
 					}
 					else if(youAttack)
 					{
-						last = defenseOdds.LastUsedWeapon(victim, true);
-						if(last && last->Attributes("Boarding Defence"))
+						last = defenseOdds.LastUsedWeapon(*victim, true);
+						if(last && last->Attributes().Get("Boarding Defence"))
 							you->AddOutfit(last, -1);
 					}
 					victim->AddCrew(-1);
