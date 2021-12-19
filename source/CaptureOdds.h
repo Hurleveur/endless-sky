@@ -15,6 +15,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include <vector>
 
+class Outfit;
 class Ship;
 
 
@@ -56,7 +57,8 @@ private:
 	// Calculate attack or defense power for each number of crew members up to
 	// the given ship's full complement.
 	static std::vector<double> Power(const Ship &ship, bool isDefender);
-	
+	// Returns the name of the last used weapon.
+	const Outfit *LastUsedWeapon(const Ship &ship, bool isDefender) const;
 	
 private:
 	// Attacker and defender power lookup tables.

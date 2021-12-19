@@ -172,6 +172,7 @@ void BoardingPanel::Draw()
 		crew = you->Crew();
 		info.SetString("cargo space", to_string(you->Cargo().Free()));
 		info.SetString("your crew", to_string(crew));
+		crew %= combatWidth;
 		info.SetString("your attack",
 			Round(attackOdds.AttackerPower(crew)));
 		info.SetString("your defense",
@@ -181,11 +182,12 @@ void BoardingPanel::Draw()
 	if(victim && (victim->IsCapturable() || victim->IsYours()))
 	{
 		info.SetString("enemy crew", to_string(vCrew));
+		vCrew %= combatWidth;
 		info.SetString("enemy attack",
 			Round(defenseOdds.AttackerPower(vCrew)));
 		info.SetString("enemy defense",
 			Round(attackOdds.DefenderPower(vCrew)));
-	}
+	}//crew and vcrew only modified localy ?
 	if(victim && victim->IsCapturable() && !victim->IsYours())
 	{
 		// If you haven't initiated capture yet, show the self destruct odds in
@@ -202,6 +204,13 @@ void BoardingPanel::Draw()
 			Round(100. * (1. - defenseOdds.Odds(vCrew, crew))) + "%");
 		info.SetString("defense casualties",
 			Round(defenseOdds.DefenderCasualties(vCrew, crew)));
+		int corridor = victim->Attributes().Get("corridors");
+		int layout = victim->Attributes().Get("design layout");
+		combatWidth = corridor ? corridor : victim->RequiredCrew() / 20 * layout ? layout : 
+			victim->Attributes().Category() == "Transport" ? 2. : 
+			(victim->Attributes().Category() == "Light Freighter" || 
+			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5;
+		info.SetString("fighting space", combatWidth);
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
@@ -333,13 +342,11 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			else if(enemyAttacks)
 				messages.push_back("You defend. ");
 			
-			// To speed things up, have multiple rounds of combat each time you
-			// click the button, if you started with a lot of crew.
-			int rounds = max(1, yourStartCrew / 5);
-			for(int round = 0; round < rounds; ++round)
+			// There are as many rounds of combat as there is space on the ship to fight, except if you have too little crew.
+			for(int round = 0; round < combatWidth % you->Crew(); ++round)
 			{
-				int yourCrew = you->Crew();
-				int enemyCrew = victim->Crew();
+				int yourCrew = you->Crew() % combatWidth;
+				int enemyCrew = victim->Crew() % combatWidth;
 				if(!yourCrew || !enemyCrew)
 					break;
 				
@@ -355,9 +362,38 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					break;
 				
 				if(Random::Real() * total >= yourPower)
+				{
+					const Outfit* last = nullptr;
+					if(youAttack)
+					{
+						last = attackOdds.LastUsedWeapon(you, false);
+						if(last && last->Attributes("consumable"))
+							you->AddOutfit(last, -1);
+					}
+					else if(enemyAttacks)
+					{
+						last = defenseOdds.LastUsedWeapon(you, true);
+						if(last && last->Attributes("Boarding Defence"))
+							you->AddOutfit(last, -1);
+					}
 					you->AddCrew(-1);
+				}
 				else
+				{
+					if(enemyAttacks)
+					{
+						last = attackOdds.LastUsedWeapon(victim, true);
+						if(last && last->Attributes("consumable"))
+							you->AddOutfit(last, -1);
+					}
+					else if(youAttack)
+					{
+						last = defenseOdds.LastUsedWeapon(victim, false);
+						if(last && last->Attributes("Boarding Defence"))
+							you->AddOutfit(last, -1);
+					}
 					victim->AddCrew(-1);
+				}
 			}
 			
 			// Report how many casualties each side suffered.

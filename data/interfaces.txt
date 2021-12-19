@@ -766,6 +766,13 @@ interface "boarding"
 		from 330 28
 		align right
 	
+	label "fighting space:"
+		from 50 -42
+		align left
+	string "fighting space"
+		from 330 -42
+		align right
+	
 	active if "can take"
 	button t "_Take"
 		center -235 115

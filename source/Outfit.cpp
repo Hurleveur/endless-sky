@@ -74,6 +74,21 @@ namespace {
 		{"shield heat multiplier", -1.}
 	};
 	
+	const std::map<std::string, int> corridors = 
+	{
+		{"tight", 1.}, {"narrow", 2.}, {"standart", 4}, {"wide", 8}, {"open", 16}, {"unkown", 0}
+	};
+
+	const std::map<std::string, double> layout = 
+	{
+		{"twisted", 1.}, {"direct", 1.5}, {"open-plan", 2.}, {"unkown", 0.}
+	};
+
+	const std::map<std::string, int> ventilation =
+	{
+		{"poor", 1}, {"adequate", 1}, {"good", 1}, {"unkown", 0}
+	};
+
 	void AddFlareSprites(vector<pair<Body, int>> &thisFlares, const pair<Body, int> &it, int count)
 	{
 		auto oit = find_if(thisFlares.begin(), thisFlares.end(),
@@ -201,6 +216,12 @@ void Outfit::Load(const DataNode &node)
 			// Jump range must be positive.
 			attributes[child.Token(0)] = max(0., child.Value(1));
 		}
+		else if(child.Token(0) == "corridors")
+			attributes[child.Token(0)] = corridors.find(child.Token(1))->second;
+		else if(child.Token(0) == "design layout")
+			attributes[child.Token(0)] = layout.find(child.Token(1))->second;
+		else if(child.Token(0) == "ventilation capacity")
+			attributes[child.Token(0)] = ventilation.find(child.Token(1))->second;
 		else if(child.Size() >= 2)
 			attributes[child.Token(0)] = child.Value(1);
 		else

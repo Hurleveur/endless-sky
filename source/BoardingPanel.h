@@ -114,6 +114,7 @@ private:
 	int selected = 0;
 	double scroll = 0.;
 	
+	int combatWidth = 1.;
 	bool playerDied = false;
 	bool isCapturing = false;
 	bool isFirstCaptureAction = true;
