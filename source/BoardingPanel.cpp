@@ -380,15 +380,16 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				}
 				else
 				{
+					const Outfit* last = nullptr;
 					if(enemyAttacks)
 					{
-						last = attackOdds.LastUsedWeapon(victim, true);
+						last = attackOdds.LastUsedWeapon(victim, false);
 						if(last && last->Attributes("consumable"))
 							you->AddOutfit(last, -1);
 					}
 					else if(youAttack)
 					{
-						last = defenseOdds.LastUsedWeapon(victim, false);
+						last = defenseOdds.LastUsedWeapon(victim, true);
 						if(last && last->Attributes("Boarding Defence"))
 							you->AddOutfit(last, -1);
 					}
