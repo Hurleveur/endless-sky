@@ -144,7 +144,9 @@ namespace {
 		{"installable", "This is not an installable item."},
 		{"hyperdrive", "Allows you to make hyperjumps."},
 		{"jump drive", "Lets you jump to any nearby system."},
-		{"atrocity", "This outfit is considered an atrocity."}
+		{"atrocity", "This outfit is considered an atrocity."},
+		{"consumable", "This outfit will be destroyed after successful use."},
+		{"defense", "This outfit is used in defense of a ship."}
 	};
 }
 

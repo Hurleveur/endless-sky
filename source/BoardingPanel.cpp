@@ -51,6 +51,17 @@ namespace {
 		
 		return result;
 	}
+	
+	int Truncation(int value, int to)
+	{
+		if(value <= to)
+			return value;
+		while(value > to)
+			value -= to;
+		if(value < to)
+			value = to;
+		return value;
+	}
 }
 
 
@@ -167,26 +178,28 @@ void BoardingPanel::Draw()
 	
 	// This should always be true, but double check.
 	int crew = 0;
+	int truncCrew = crew;
 	if(you)
 	{
 		crew = you->Crew();
 		info.SetString("cargo space", to_string(you->Cargo().Free()));
 		info.SetString("your crew", to_string(crew));
-		crew %= combatWidth;
+		truncCrew = Truncation(crew, combatWidth);
 		info.SetString("your attack",
-			Round(attackOdds.AttackerPower(crew)));
+			Round(attackOdds.AttackerPower(truncCrew)));
 		info.SetString("your defense",
-			Round(defenseOdds.DefenderPower(crew)));
+			Round(defenseOdds.DefenderPower(truncCrew)));
 	}
 	int vCrew = victim ? victim->Crew() : 0;
+	int truncvCrew = vCrew;
 	if(victim && (victim->IsCapturable() || victim->IsYours()))
 	{
 		info.SetString("enemy crew", to_string(vCrew));
-		vCrew %= combatWidth;
+		truncvCrew = Truncation(vCrew, combatWidth);
 		info.SetString("enemy attack",
-			Round(defenseOdds.AttackerPower(vCrew)));
+			Round(defenseOdds.AttackerPower(truncvCrew)));
 		info.SetString("enemy defense",
-			Round(attackOdds.DefenderPower(vCrew)));
+			Round(attackOdds.DefenderPower(truncvCrew)));
 	}//crew and vcrew only modified localy ?
 	if(victim && victim->IsCapturable() && !victim->IsYours())
 	{
@@ -199,25 +212,25 @@ void BoardingPanel::Draw()
 		info.SetString("attack odds",
 			Round(100. * odds) + "%");
 		info.SetString("attack casualties",
-			Round(attackOdds.AttackerCasualties(crew, vCrew)));
+			Round(attackOdds.AttackerCasualties(truncCrew, truncvCrew) * max(1, crew / 25)));
 		info.SetString("defense odds",
 			Round(100. * (1. - defenseOdds.Odds(vCrew, crew))) + "%");
 		info.SetString("defense casualties",
-			Round(defenseOdds.DefenderCasualties(vCrew, crew)));
+			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1, crew / 25)));
 		int corridor = victim->Attributes().Get("corridors");
 		int layout = victim->Attributes().Get("design layout");
-		combatWidth = (corridor ? corridor : victim->RequiredCrew() / 20) * (layout ? layout : 
+		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10) + max(1., victim->Attributes().Get("cargo") / 25)) * (layout ? layout : 
 			victim->Attributes().Category() == "Transport" ? 2. : 
 			(victim->Attributes().Category() == "Light Freighter" || 
 			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
-		info.SetString("fighting space", Round(combatWidth));
+		info.SetString("fighting space", to_string(combatWidth));
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
 	boarding->Draw(info, this);
 	
 	// Draw the status messages from hand to hand combat.
-	Point messagePos(50., 55.);
+	Point messagePos(50., 75.);
 	for(const string &message : messages)
 	{
 		font.Draw(message, messagePos, bright);
@@ -342,11 +355,13 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			else if(enemyAttacks)
 				messages.push_back("You defend. ");
 			
-			// There are as many rounds of combat as there is space on the ship to fight, except if you have too little crew.
-			for(int round = 0; round < combatWidth % you->Crew(); ++round)
+			// There are as many rounds of combat as there is space on the ship to fight,
+			// and then we multiply it a bit so it does not take ages.
+			for(int round = 0; round < combatWidth * max(1, yourStartCrew / 25); ++round)
 			{
-				int yourCrew = you->Crew() % combatWidth;
-				int enemyCrew = victim->Crew() % combatWidth;
+				int yourCrew = Truncation(you->Crew(), combatWidth);
+				int enemyCrew = Truncation(victim->Crew(), combatWidth);
+				
 				if(!yourCrew || !enemyCrew)
 					break;
 				
@@ -364,16 +379,13 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				if(Random::Real() * total >= yourPower)
 				{
 					const Outfit* last = nullptr;
-					if(youAttack)
+					if(enemyAttacks)
 					{
-						last = attackOdds.LastUsedWeapon(*you, false);
+						last = attackOdds.LastUsedWeapon(*victim, false);
 						if(last && last->Attributes().Get("consumable"))
-							you->AddOutfit(last, -1);
-					}
-					else if(enemyAttacks)
-					{
+							victim->AddOutfit(last, -1);
 						last = defenseOdds.LastUsedWeapon(*you, true);
-						if(last && last->Attributes().Get("Boarding Defence"))
+						if(last && last->Attributes().Get("consumable") && last->Attributes().Get("defense"))
 							you->AddOutfit(last, -1);
 					}
 					you->AddCrew(-1);
@@ -381,17 +393,14 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				else
 				{
 					const Outfit* last = nullptr;
-					if(enemyAttacks)
+					if(youAttack)
 					{
-						last = attackOdds.LastUsedWeapon(*victim, false);
+						last = attackOdds.LastUsedWeapon(*you, false);
 						if(last && last->Attributes().Get("consumable"))
 							you->AddOutfit(last, -1);
-					}
-					else if(youAttack)
-					{
 						last = defenseOdds.LastUsedWeapon(*victim, true);
-						if(last && last->Attributes().Get("Boarding Defence"))
-							you->AddOutfit(last, -1);
+						if(last && last->Attributes().Get("consumable") && last->Attributes().Get("defense"))
+							victim->AddOutfit(last, -1);
 					}
 					victim->AddCrew(-1);
 				}
@@ -442,7 +451,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		GetUI()->Push(new ShipInfoPanel(player));
 	
 	// Trim the list of status messages.
-	while(messages.size() > 5)
+	while(messages.size() > 4)
 		messages.erase(messages.begin());
 	
 	return true;

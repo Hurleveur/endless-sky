@@ -705,12 +705,12 @@ interface "boarding"
 		align right
 	
 	label "crew"
-		from 190 -112
+		from 160 -112
 		align right
-	label "attack"
-		from 260 -112
+	label "fight attack"
+		from 240 -112
 		align right
-	label "defense"
+	label "fight defense"
 		from 330 -112
 		align right
 	
@@ -718,10 +718,10 @@ interface "boarding"
 		from 50 -92
 		align left
 	string "your crew"
-		from 190 -92
+		from 160 -92
 		align right
 	string "your attack"
-		from 260 -92
+		from 220 -92
 		align right
 	string "your defense"
 		from 330 -92
@@ -731,10 +731,10 @@ interface "boarding"
 		from 50 -72
 		align left
 	string "enemy crew"
-		from 190 -72
+		from 160 -72
 		align right
 	string "enemy attack"
-		from 260 -72
+		from 220 -72
 		align right
 	string "enemy defense"
 		from 330 -72
@@ -767,10 +767,10 @@ interface "boarding"
 		align right
 	
 	label "fighting space:"
-		from 50 -42
+		from 50 58
 		align left
 	string "fighting space"
-		from 330 -42
+		from 330 58
 		align right
 	
 	active if "can take"
