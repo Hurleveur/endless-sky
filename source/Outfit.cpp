@@ -76,7 +76,7 @@ namespace {
 	// For maps, the last element is the default one returned when searching and not finding.
 	const std::map<std::string, int> corridors = 
 	{
-		{"tight", 1.}, {"narrow", 2.}, {"wide", 8}, {"open", 16}, {"standart", 4}
+		{"tight", 1}, {"narrow", 2}, {"wide", 8}, {"open", 16}, {"standart", 4}
 	};
 
 	const std::map<std::string, double> layout = 

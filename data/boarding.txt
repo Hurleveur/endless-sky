@@ -1,0 +1,30 @@
+#Copyright (c) 2021 by Hurleveur
+#
+#Endless Sky is free software: you can redistribute it and/or modify it under the
+#terms of the GNU General Public License as published by the Free Software
+#Foundation, either version 3 of the License, or (at your option) any later version.
+#
+#Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+#WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+#PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+Boarding Categories
+	Corridors
+		Tight 1
+		Narrow 2
+		Standard 4
+		Wide 8
+		Open 16
+	Design Layout
+		Twisted 1
+		Direct 1.5
+		Open-Plan 2
+	Ventilation Capacity
+		Poor .5
+		Adequate 1.
+		Good 2
+	Weapon Effectiveness
+		Corridors
+		Design Layout
+		Ventilation Capacity
+		Line Of Sight

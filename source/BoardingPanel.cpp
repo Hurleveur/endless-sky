@@ -212,31 +212,22 @@ void BoardingPanel::Draw()
 		info.SetString("attack odds",
 			Round(100. * odds) + "%");
 		info.SetString("attack casualties",
-			Round(attackOdds.AttackerCasualties(truncCrew, truncvCrew) * max(1, crew / 25)));
+			Round(attackOdds.AttackerCasualties(truncCrew, truncvCrew) * max(1., crew / 25.)));
 		info.SetString("defense odds",
 			Round(100. * (1. - defenseOdds.Odds(vCrew, crew))) + "%");
 		info.SetString("defense casualties",
-			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1, crew / 25)));
+			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1., crew / 25.)));
 		int corridor = victim->Attributes().Get("corridors");
 		double layout = victim->Attributes().Get("design layout");
-		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10) + 
-			max(1., victim->Attributes().Get("cargo") / 25)) * (layout ? layout : 
+		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10.) + 
+			max(1., victim->Attributes().Get("cargo") / 25.)) * (layout ? layout : 
 			victim->Attributes().Category() == "Transport" ? 2. : 
 			(victim->Attributes().Category() == "Light Freighter" || 
 			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
-		info.SetString("enemy fighting space", to_string(combatWidth));
-		corridor = you->Attributes().Get("corridors");
-		layout = you->Attributes().Get("design layout");
-		combatWidth = (corridor ? corridor : max(1., you->Attributes().Get("bunks") / 10) + 
-			max(1., you->Attributes().Get("cargo") / 25)) * (layout ? layout : 
-			you->Attributes().Category() == "Transport" ? 2. : 
-			(you->Attributes().Category() == "Light Freighter" || 
-			you->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
-		info.SetString("your fighting space", to_string(combatWidth));
-		double ventilation = victim->Attributes().Get("ventilation");
-		info.SetString("your ventilation capacity", Round(ventilation ? ventilation : 1.5));
+		info.SetString("fighting space", to_string(combatWidth));
+		info.SetString("your ventilation capacity", Round(ventilation ? ventilation : 1.));
 		ventilation = you->Attributes().Get("ventilation");
-		info.SetString("enemy ventilation capacity", Round(ventilation ? ventilation : 1.5));
+		info.SetString("enemy ventilation capacity", Round(ventilation ? ventilation : 1.));
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
@@ -380,10 +371,10 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				
 				// Your chance of winning this round is equal to the ratio of
 				// your power to the enemy's power.
-				double yourPower = (youAttack ?
-					attackOdds.AttackerPower(yourCrew) : defenseOdds.DefenderPower(yourCrew));
-				double enemyPower = (enemyAttacks ?
-					defenseOdds.AttackerPower(enemyCrew) : attackOdds.DefenderPower(enemyCrew));
+				double yourPower = (defenseOdds.DefenderPower(yourCrew) + 
+					attackOdds.AttackerPower(yourCrew) * (youAttack ? -1. : 1.) / 5.);
+				double enemyPower = (attackOdds.DefenderPower(enemyCrew) +
+					defenseOdds.AttackerPower(enemyCrew) * (enemyAttacks ? -1 : 1.) / 5.);
 				
 				double total = yourPower + enemyPower;
 				if(!total)
