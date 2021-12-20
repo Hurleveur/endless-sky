@@ -21,13 +21,46 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 using namespace std;
 
+namespace {
+	double CalculateOutfitPower(const Ship &ship, const Ship &other, bool isDefender, double value, const Outfit *outfit)
+	{
+		const Ship &fightingPlace = isDefender ? ship : other;
+		double ventilatedVuln = outfit->Get("ventilated vulnerability");
+		// The defenders choose wether to use suits, and to ventilate.
+		if((ventilatedVuln < 0. && isDefender) || (!isDefender && ventilatedVuln))
+		{
+			value /= ship.Attributes().Get("ventilation") * ventilatedVuln;
+			value -= fightingPlace.Attributes().Get("ventable section") * ventilatedVuln;
+			value -= fightingPlace.Attributes().Get("combat environmental suit") * ventilatedVuln;
+		}
+		double narrowVuln = outfit->Get("narrow vulnerability");
+		if(narrowVuln)
+		{
+			int corridor = fightingPlace.Attributes().Get("corridors");
+			value /= (8. / corridor ? corridor : max(1., fightingPlace.Attributes().Get("bunks") / 10.) + 
+				max(1., fightingPlace.Attributes().Get("cargo") / 25.) * narrowVuln);
+			value -= fightingPlace.Attributes().Get("defensive alcoves") * narrowVuln;
+		}
+		double designVuln = outfit->Get("design vulnerability");
+		if(designVuln)
+		{
+			double layout = fightingPlace.Attributes().Get("design layout");
+			value /= (1.5 / (layout ? layout : 
+			fightingPlace.Attributes().Category() == "Transport" ? 2. : 
+			(fightingPlace.Attributes().Category() == "Light Freighter" || 
+			fightingPlace.Attributes().Category() == "Heavy Freighter") ? 1. : 1.5) * designVuln);
+			value -= fightingPlace.Attributes().Get("security embrasure") * designVuln;
+		}
+		return max(0.1, value);
+	}
+}
 
 
 // Constructor.
 CaptureOdds::CaptureOdds(const Ship &attacker, const Ship &defender)
 {
-	powerA = Power(attacker, false);
-	powerD = Power(defender, true);
+	powerA = Power(attacker, defender, false);
+	powerD = Power(defender, attacker, true);
 	Calculate();
 }
 
@@ -176,7 +209,7 @@ int CaptureOdds::Index(int attackingCrew, int defendingCrew) const
 
 // Generate a vector with the total power of the given ship's crew when any
 // number of them are left, either for attacking or for defending.
-vector<double> CaptureOdds::Power(const Ship &ship, bool isDefender)
+vector<double> CaptureOdds::Power(const Ship &ship, const Ship &other, bool isDefender)
 {
 	vector<double> power;
 	if(!ship.Crew())
@@ -186,14 +219,17 @@ vector<double> CaptureOdds::Power(const Ship &ship, bool isDefender)
 	const string attribute = (isDefender ? "capture defense" : "capture attack");
 	const double crewPower = (isDefender ?
 		ship.GetGovernment()->CrewDefense() : ship.GetGovernment()->CrewAttack());
-	
+
 	// Each crew member can wield one weapon. They use the most powerful ones
 	// that can be wielded by the remaining crew.
 	for(const auto &it : ship.Outfits())
 	{
 		double value = it.first->Get(attribute);
 		if(value > 0. && it.second > 0)
+		{
+			value = CalculateOutfitPower(ship, other, isDefender, value, it.first);
 			power.insert(power.end(), it.second, value);
+		}
 	}
 	// Use the best weapons first.
 	sort(power.begin(), power.end(), greater<double>());

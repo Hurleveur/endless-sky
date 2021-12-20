@@ -218,19 +218,32 @@ void BoardingPanel::Draw()
 		info.SetString("defense casualties",
 			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1, crew / 25)));
 		int corridor = victim->Attributes().Get("corridors");
-		int layout = victim->Attributes().Get("design layout");
-		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10) + max(1., victim->Attributes().Get("cargo") / 25)) * (layout ? layout : 
+		double layout = victim->Attributes().Get("design layout");
+		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10) + 
+			max(1., victim->Attributes().Get("cargo") / 25)) * (layout ? layout : 
 			victim->Attributes().Category() == "Transport" ? 2. : 
 			(victim->Attributes().Category() == "Light Freighter" || 
 			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
-		info.SetString("fighting space", to_string(combatWidth));
+		info.SetString("enemy fighting space", to_string(combatWidth));
+		corridor = you->Attributes().Get("corridors");
+		layout = you->Attributes().Get("design layout");
+		combatWidth = (corridor ? corridor : max(1., you->Attributes().Get("bunks") / 10) + 
+			max(1., you->Attributes().Get("cargo") / 25)) * (layout ? layout : 
+			you->Attributes().Category() == "Transport" ? 2. : 
+			(you->Attributes().Category() == "Light Freighter" || 
+			you->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
+		info.SetString("your fighting space", to_string(combatWidth));
+		double ventilation = victim->Attributes().Get("ventilation");
+		info.SetString("your ventilation capacity", Round(ventilation ? ventilation : 1.5));
+		ventilation = you->Attributes().Get("ventilation");
+		info.SetString("enemy ventilation capacity", Round(ventilation ? ventilation : 1.5));
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
 	boarding->Draw(info, this);
 	
 	// Draw the status messages from hand to hand combat.
-	Point messagePos(50., 75.);
+	Point messagePos(50., 95.);
 	for(const string &message : messages)
 	{
 		font.Draw(message, messagePos, bright);
@@ -451,7 +464,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		GetUI()->Push(new ShipInfoPanel(player));
 	
 	// Trim the list of status messages.
-	while(messages.size() > 4)
+	while(messages.size() > 3)
 		messages.erase(messages.begin());
 	
 	return true;

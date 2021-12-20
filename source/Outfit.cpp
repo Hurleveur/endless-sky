@@ -73,20 +73,20 @@ namespace {
 		{"shield fuel multiplier", -1.},
 		{"shield heat multiplier", -1.}
 	};
-	
+	// For maps, the last element is the default one returned when searching and not finding.
 	const std::map<std::string, int> corridors = 
 	{
-		{"tight", 1.}, {"narrow", 2.}, {"standart", 4}, {"wide", 8}, {"open", 16}, {"unkown", 0}
+		{"tight", 1.}, {"narrow", 2.}, {"wide", 8}, {"open", 16}, {"standart", 4}
 	};
 
 	const std::map<std::string, double> layout = 
 	{
-		{"twisted", 1.}, {"direct", 1.5}, {"open-plan", 2.}, {"unkown", 0.}
+		{"twisted", 1.}, {"open-plan", 2.}, {"direct", 1.5}
 	};
 
-	const std::map<std::string, int> ventilation =
+	const std::map<std::string, double> ventilation =
 	{
-		{"poor", 1}, {"adequate", 1}, {"good", 1}, {"unkown", 0}
+		{"poor", .5}, {"good", 2.}, {"adequate", 1.}
 	};
 
 	void AddFlareSprites(vector<pair<Body, int>> &thisFlares, const pair<Body, int> &it, int count)

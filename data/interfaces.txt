@@ -766,12 +766,31 @@ interface "boarding"
 		from 330 28
 		align right
 	
-	label "fighting space:"
+	label "your fighting space:"
 		from 50 58
 		align left
-	string "fighting space"
+	string "your fighting space"
+		from 230 58
+		align right
+	label "  enemy:"
+		from 250 58
+		align left
+	string "enemy fighting space"
 		from 330 58
 		align right
+	label "your ventilation capacity: "
+		from 50 78
+		align left
+	string "your ventilation capacity"
+		from 230 78
+		align right
+	label "  enemy:"
+		from 250 78
+		align left
+	string "enemy ventilation capacity"
+		from 330 78
+		align right
+
 	
 	active if "can take"
 	button t "_Take"
