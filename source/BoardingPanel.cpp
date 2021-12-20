@@ -396,10 +396,16 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					{
 						last = attackOdds.LastUsedWeapon(*victim, false);
 						if(last && last->Attributes().Get("consumable"))
+						{
 							victim->AddOutfit(last, -1);
+							attackOdds.RefreshOdds(*you, *victim, false);
+						}
 						last = defenseOdds.LastUsedWeapon(*you, true);
 						if(last && last->Attributes().Get("consumable") && last->Attributes().Get("defense"))
+						{
 							you->AddOutfit(last, -1);
+							defenseOdds.RefreshOdds(*victim, *you, true);
+						}
 					}
 					you->AddCrew(-1);
 				}
@@ -410,10 +416,16 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					{
 						last = attackOdds.LastUsedWeapon(*you, false);
 						if(last && last->Attributes().Get("consumable"))
+						{
 							you->AddOutfit(last, -1);
+							defenseOdds.RefreshOdds(*victim, *you, false);
+						}
 						last = defenseOdds.LastUsedWeapon(*victim, true);
 						if(last && last->Attributes().Get("consumable") && last->Attributes().Get("defense"))
+						{
 							victim->AddOutfit(last, -1);
+							attackOdds.RefreshOdds(*you, *victim, true);
+						}
 					}
 					victim->AddCrew(-1);
 				}

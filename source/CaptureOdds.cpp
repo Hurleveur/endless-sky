@@ -56,11 +56,24 @@ namespace {
 }
 
 
+
 // Constructor.
 CaptureOdds::CaptureOdds(const Ship &attacker, const Ship &defender)
 {
 	powerA = Power(attacker, defender, false);
 	powerD = Power(defender, attacker, true);
+	Calculate();
+}
+
+
+
+// Refreshes the lookup tables when a consumable item is used.
+void CaptureOdds::RefreshOdds(const Ship &attacker, const Ship &defender, bool isDefender)
+{
+	if(isDefender)
+		powerD = Power(defender, attacker, true);
+	else
+		powerA = Power(attacker, defender, false);
 	Calculate();
 }
 

@@ -30,6 +30,8 @@ class Ship;
 // is attacking or defending; defending crew get a +1 power bonus.
 class CaptureOdds {
 public:
+	// Refreshes the lookup tables when a consumable item is used.
+	void RefreshOdds(const Ship &attacker, const Ship &defender, bool isDefender);
 	// Calculate odds that the first given ship can capture the second, assuming
 	// the first ship always attacks and the second one always defends.
 	CaptureOdds(const Ship &attacker, const Ship &defender);
