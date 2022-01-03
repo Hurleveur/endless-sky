@@ -74,6 +74,7 @@ BoardingPanel::BoardingPanel(PlayerInfo &player, const shared_ptr<Ship> &victim)
 	// The escape key should close this panel rather than bringing up the main menu.
 	SetInterruptible(false);
 	
+	crewRep = GameData::PlayerGovernment();
 	// Figure out how much the victim's commodities are worth in the current
 	// system and add them to the list of plunder.
 	const System &system = *player.GetSystem();
@@ -224,17 +225,14 @@ void BoardingPanel::Draw()
 			victim->Attributes().Category() == "Transport" ? 2. : 
 			(victim->Attributes().Category() == "Light Freighter" || 
 			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
-		info.SetString("fighting space", to_string(combatWidth));
-		info.SetString("your ventilation capacity", Round(ventilation ? ventilation : 1.));
-		ventilation = you->Attributes().Get("ventilation");
-		info.SetString("enemy ventilation capacity", Round(ventilation ? ventilation : 1.));
+		info.SetString("fighting space", to_string(attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)));
 	}
 	
 	const Interface *boarding = GameData::Interfaces().Get("boarding");
 	boarding->Draw(info, this);
 	
 	// Draw the status messages from hand to hand combat.
-	Point messagePos(50., 95.);
+	Point messagePos(50., 80.);
 	for(const string &message : messages)
 	{
 		font.Draw(message, messagePos, bright);
@@ -361,7 +359,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			
 			// There are as many rounds of combat as there is space on the ship to fight,
 			// and then we multiply it a bit so it does not take ages.
-			for(int round = 0; round < combatWidth * max(1, yourStartCrew / 25); ++round)
+			for(int round = 0; round < combatWidth * max(1, yourStartCrew / 50); ++round)
 			{
 				int yourCrew = Truncation(you->Crew(), combatWidth);
 				int enemyCrew = Truncation(victim->Crew(), combatWidth);
@@ -398,6 +396,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 							defenseOdds.RefreshOdds(*victim, *you, true);
 						}
 					}
+					crewRep->AddReputation(-2);
 					you->AddCrew(-1);
 				}
 				else
@@ -418,13 +417,16 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 							attackOdds.RefreshOdds(*you, *victim, true);
 						}
 					}
+					// Only gain reputation by taking on other crews if you do not use illegal weapons.
+					crewRep->AddReputation(last->Attributes().Get("illegal") != 0);
 					victim->AddCrew(-1);
 				}
 			}
-			
+			int crew = you->Crew();
+			int vCrew = victim->Crew();
 			// Report how many casualties each side suffered.
-			int yourCasualties = yourStartCrew - you->Crew();
-			int enemyCasualties = enemyStartCrew - victim->Crew();
+			int yourCasualties = yourStartCrew - crew;
+			int enemyCasualties = enemyStartCrew - vCrew;
 			if(yourCasualties && enemyCasualties)
 				messages.back() += "You lose " + to_string(yourCasualties)
 					+ " crew; they lose " + to_string(enemyCasualties) + ".";
@@ -433,8 +435,23 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			else if(enemyCasualties)
 				messages.back() += "They lose " + to_string(enemyCasualties) + " crew.";
 			
+			// If you have place for the enemy crew, they may consider surrendering.
+			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0)
+			{
+				//double extraReputationCost = -GameData::PlayerGovernment()->Reputation() / 1000;
+				//extraReputationCost = max(1, extraReputationCost);
+				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 > Random::Int(100))
+				{
+					messages.push_back("Considering their grave situation, the " + to_string(vCrew));
+					messages.push_back("members left of the enemy crew join you.");
+					you->AddCrew(vCrew);
+					crewRep->AddReputation(vCrew);
+					victim->AddCrew(-vCrew);
+				}
+			}
+			
 			// Check if either ship has been captured.
-			if(!you->Crew())
+			if(!crew)
 			{
 				messages.push_back("You have been killed. Your ship is lost.");
 				you->WasCaptured(victim);
@@ -467,7 +484,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		GetUI()->Push(new ShipInfoPanel(player));
 	
 	// Trim the list of status messages.
-	while(messages.size() > 3)
+	while(messages.size() > 4)
 		messages.erase(messages.begin());
 	
 	return true;

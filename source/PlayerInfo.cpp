@@ -702,8 +702,13 @@ int64_t PlayerInfo::Salaries() const
 	if(!crew)
 		return 0;
 	
-	// Every crew member except the player receives 100 credits per day.
-	return 100 * (crew - 1);
+	int extraReputationCost = -GameData::PlayerGovernment()->Reputation() / 1000;
+	extraReputationCost = extraReputationCost * extraReputationCost * extraReputationCost;
+	// Positive reputation should decrease crew cost, but we want borders, salary should be between 50 and 200.
+	extraReputationCost = min(max(-5, extraReputationCost), 10);
+	// Every crew member except the player receives 100 credits per day by default,
+	// and more should the player have a bad reputation.
+	return 100 * (crew - 1) + 10 * (extraReputationCost);
 }
 
 

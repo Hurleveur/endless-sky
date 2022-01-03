@@ -44,8 +44,8 @@ namespace {
 			fightingPlace.Attributes().Category() == "Heavy Freighter") ? 1. : 1.5) * designVuln);
 		}
 		// These ones depend on security systems installed.
-		const vector<const std::string> names = {"combat environmental suit", "security alcove"};
-		for(auto i = 0; i < names.size(); ++i)
+		static const vector<std::string> names = {"combat environmental suit", "security alcove"};
+		for(unsigned i = 0; i < names.size(); ++i)
 		{
 			double vulnerability = weapon->Get(names[i]);
 			double shipAttribute = fightingPlace.Attributes().Get(names[i]);

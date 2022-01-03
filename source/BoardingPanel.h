@@ -21,6 +21,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include <string>
 #include <vector>
 
+class Government;
 class Outfit;
 class PlayerInfo;
 class Ship;
@@ -108,7 +109,8 @@ private:
 	PlayerInfo &player;
 	std::shared_ptr<Ship> you;
 	std::shared_ptr<Ship> victim;
-	
+	const Government *crewRep;
+
 	// List of items you can plunder.
 	std::vector<Plunder> plunder;
 	int selected = 0;
