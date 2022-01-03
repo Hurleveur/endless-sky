@@ -201,13 +201,13 @@ void BoardingPanel::Draw()
 			Round(defenseOdds.AttackerPower(truncvCrew)));
 		info.SetString("enemy defense",
 			Round(attackOdds.DefenderPower(truncvCrew)));
-	}//crew and vcrew only modified localy ?
+	}
 	if(victim && victim->IsCapturable() && !victim->IsYours())
 	{
 		// If you haven't initiated capture yet, show the self destruct odds in
 		// the attack odds. It's illogical for you to have access to that info,
 		// but not knowing what your true odds are is annoying.
-		double odds = attackOdds.Odds(crew, vCrew);
+		double odds = attackOdds.Odds(crew - you->RequiredCrew(), vCrew);
 		if(!isCapturing)
 			odds *= (1. - victim->Attributes().Get("self destruct"));
 		info.SetString("attack odds",
@@ -215,7 +215,7 @@ void BoardingPanel::Draw()
 		info.SetString("attack casualties",
 			Round(attackOdds.AttackerCasualties(truncCrew, truncvCrew) * max(1., crew / 25.)));
 		info.SetString("defense odds",
-			Round(100. * (1. - defenseOdds.Odds(vCrew, crew))) + "%");
+			Round(100. * (1. - defenseOdds.Odds(vCrew - victim->RequiredCrew(), crew))) + "%");
 		info.SetString("defense casualties",
 			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1., crew / 25.)));
 		int corridor = victim->Attributes().Get("corridors");
@@ -339,7 +339,11 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		// to your ship in peace. That is to allow the player to "cancel" if
 		// they did not really mean to try to capture the ship.
 		bool youAttack = (key == 'a' && (yourStartCrew > 1 || !victim->RequiredCrew()));
-		bool enemyAttacks = defenseOdds.Odds(enemyStartCrew, yourStartCrew) > .5;
+		// Civilian ships should never attack you.
+		bool isCivilian = (victim->Attributes().Category() == "Transport" || 
+						victim->Attributes().Category() == "Light Freighter" || 
+						victim->Attributes().Category() == "Heavy Freighter");
+		bool enemyAttacks = isCivilian ? false : defenseOdds.Odds(enemyStartCrew - victim->RequiredCrew(), yourStartCrew) > .5;
 		if(isFirstCaptureAction && !youAttack)
 			enemyAttacks = false;
 		isFirstCaptureAction = false;
@@ -361,18 +365,22 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			// and then we multiply it a bit so it does not take ages.
 			for(int round = 0; round < combatWidth * max(1, yourStartCrew / 50); ++round)
 			{
-				int yourCrew = Truncation(you->Crew(), combatWidth);
-				int enemyCrew = Truncation(victim->Crew(), combatWidth);
+				int yourCrew = Truncation(you->Crew() - you->RequiredCrew(), combatWidth);
+				int yourDefendingCrew = Truncation(you->Crew(), combatWidth);
+				int enemyCrew = Truncation(victim->Crew() - victim->RequiredCrew(), combatWidth);
+				int enemyDefendingCrew = Truncation(victim->Crew(), combatWidth);
 				
 				if(!yourCrew || !enemyCrew)
 					break;
 				
 				// Your chance of winning this round is equal to the ratio of
 				// your power to the enemy's power.
-				double yourPower = (defenseOdds.DefenderPower(yourCrew) + 
-					attackOdds.AttackerPower(yourCrew) * (youAttack ? -1. : 1.) / 5.);
-				double enemyPower = (attackOdds.DefenderPower(enemyCrew) +
-					defenseOdds.AttackerPower(enemyCrew) * (enemyAttacks ? -1 : 1.) / 5.);
+				double yourPower = 
+					(youAttack ? defenseOdds.DefenderPower(yourDefendingCrew) : defenseOdds.DefenderPower(yourCrew)
+					+ attackOdds.AttackerPower(yourCrew) * (youAttack ? -1. : 1.));
+				double enemyPower = 
+					(enemyAttacks ? attackOdds.DefenderPower(enemyDefendingCrew) : attackOdds.DefenderPower(enemyCrew)
+					+ defenseOdds.AttackerPower(enemyCrew) * (enemyAttacks ? -1 : 1.));
 				
 				double total = yourPower + enemyPower;
 				if(!total)
@@ -440,7 +448,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			{
 				//double extraReputationCost = -GameData::PlayerGovernment()->Reputation() / 1000;
 				//extraReputationCost = max(1, extraReputationCost);
-				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 > Random::Int(100))
+				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 + isCivilian * 20 > Random::Int(100))
 				{
 					messages.push_back("Considering their grave situation, the " + to_string(vCrew));
 					messages.push_back("members left of the enemy crew join you.");
