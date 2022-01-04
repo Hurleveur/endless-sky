@@ -118,6 +118,8 @@ public:
 	Account &Accounts();
 	// Calculate the daily salaries for crew, not counting crew on "parked" ships.
 	int64_t Salaries() const;
+	// Get the salary per day, for one crew.
+	int DailySalary() const;
 	// Calculate the daily maintenance cost for all ships and in cargo outfits.
 	int64_t Maintenance() const;
 	

@@ -691,24 +691,32 @@ int64_t PlayerInfo::Salaries() const
 {
 	// Don't count extra crew on anything but the flagship.
 	int64_t crew = 0;
+	int extraCrew = 0;
 	const Ship *flagship = Flagship();
 	if(flagship)
-		crew = flagship->Crew() - flagship->RequiredCrew();
+		extraCrew = flagship->Crew() - flagship->RequiredCrew();
 	
 	// A ship that is "parked" remains on a planet and requires no salaries.
 	for(const shared_ptr<Ship> &ship : ships)
 		if(!ship->IsParked() && !ship->IsDestroyed())
 			crew += ship->RequiredCrew();
-	if(!crew)
+	if(!crew && !extraCrew)
 		return 0;
 	
+	return DailySalary() * (crew - 1 + extraCrew * 1.5);
+}
+
+
+
+int PlayerInfo::DailySalary() const
+{
 	int extraReputationCost = -GameData::PlayerGovernment()->Reputation() / 1000;
 	extraReputationCost = extraReputationCost * extraReputationCost * extraReputationCost;
 	// Positive reputation should decrease crew cost, but we want borders, salary should be between 50 and 200.
 	extraReputationCost = min(max(-5, extraReputationCost), 10);
 	// Every crew member except the player receives 100 credits per day by default,
 	// and more should the player have a bad reputation.
-	return 100 * (crew - 1) + 10 * (extraReputationCost);
+	return extraReputationCost * 10 + 100;
 }
 
 
