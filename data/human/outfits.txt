@@ -350,6 +350,14 @@ outfit "Interference Plating"
 	description "If you're in the habit of carrying illegal cargo or outfits, this plating increases the odds that a scan of your ship will fail to detect it. The more of these you install, the better your chances of evading detection. It even helps against scans at spaceports, so you can more reliably land to refuel without getting caught."
 
 
+outfit "Armory"
+	category "Hand to Hand"
+	cost 50000
+	thumbnail "outfit/security station"
+	"h2h capacity" 50
+	"outfit space" -5
+	"unplunderable" 1
+	description "When trying to equip their crew with more weapons than initially planned by the ship's factories, you may find yourself lacking space for them. This outfit will allow you to install more."
 
 outfit "Laser Rifle"
 	category "Hand to Hand"
@@ -357,6 +365,7 @@ outfit "Laser Rifle"
 	thumbnail "outfit/laser rifle"
 	"capture attack" .6
 	"capture defense" .8
+	"h2h capacity" -1
 	"unplunderable" 1
 	description "A laser rifle is a step up from the sidearms that crew members typically carry for defense against pirates: more powerful, and more accurate as well. For each of these rifles that one of your crew is wielding, your odds of capturing another ship or defending your own ship from boarders are increased substantially."
 
@@ -367,6 +376,8 @@ outfit "Fragmentation Grenades"
 	thumbnail "outfit/fragmentation grenades"
 	"capture attack" 1.3
 	"capture defense" .3
+	"consumable" 1
+	"h2h capacity" -1
 	"unplunderable" 1
 	description "Fragmentation grenades are an only marginally legal weapon for hand-to-hand combat when boarding a ship, useful for flushing out defenders who are hunkered down in defensible choke points inside their own ship. They are much less useful as a defensive weapon, but still better than nothing."
 
@@ -388,6 +399,8 @@ outfit "Nerve Gas"
 	"capture attack" 2.8
 	"capture defense" .8
 	"illegal" 1000000
+	"consumable" 1
+	"h2h capacity" -1
 	"unplunderable" 1
 	description "This is a highly illegal weapon for hand to hand combat when boarding an enemy ship. Because chemical weapons are banned by interstellar law, you can be severely fined for getting caught in possession of nerve gas canisters. But, they do clear out an enemy ship quicker than just about anything else..."
 

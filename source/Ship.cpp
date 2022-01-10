@@ -598,6 +598,8 @@ void Ship::FinishLoading(bool isNewInstance)
 	
 	baseAttributes.Set("gun ports", armament.GunCount());
 	baseAttributes.Set("turret mounts", armament.TurretCount());
+	if(!baseAttributes.Get("h2h capacity"))
+		baseAttributes.Set("h2h capacity", int(baseAttributes.Get("required crew") + baseAttributes.Get("bunks")) / 2 + 1);
 	
 	if(addAttributes)
 	{
@@ -711,7 +713,7 @@ void Ship::FinishLoading(bool isNewInstance)
 	
 	// Issue warnings if this ship has is misconfigured, e.g. is missing required values
 	// or has negative outfit, cargo, weapon, or engine capacity.
-	for(auto &&attr : set<string>{"outfit space", "cargo space", "weapon capacity", "engine capacity"})
+	for(auto &&attr : set<string>{"outfit space", "cargo space", "weapon capacity", "engine capacity", "h2h capacity"})
 	{
 		double val = attributes.Get(attr);
 		if(val < 0)

@@ -32,6 +32,7 @@ ship "Albatross"
 		"outfit space" 672
 		"weapon capacity" 236
 		"engine capacity" 142
+		"h2h capacity" 75
 		"shield generation" 5.2
 		"shield energy" 4.6
 		"hull repair rate" 1.5

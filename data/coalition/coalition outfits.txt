@@ -301,6 +301,7 @@ outfit "Enforcer Confrontation Gear"
 	thumbnail "outfit/enforcer confrontation gear"
 	"capture attack" 3.1
 	"capture defense" 4.9
+	"h2h capacity" -1
 	"unplunderable" 1
 	description "The peak of Heliarch combat engineering, this weapon uses condensed blasts of energy to dispatch any who dare threaten the Coalition safety."
 
@@ -312,6 +313,7 @@ outfit "Enforcer Riot Staff"
 	thumbnail "outfit/enforcer riot staff"
 	"capture attack" 2.0
 	"capture defense" 3.5
+	"h2h capacity" -1
 	"unplunderable" 1
 	description "Made to deal with the occasional dissidents that pop up around Coalition space in a non lethal manner, these weapons see minimal use in shipbound combat, but are carried anyway in the event a dissident gets aboard."
 

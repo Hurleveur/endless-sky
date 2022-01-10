@@ -26,6 +26,7 @@ ship "Marauder Arrow"
 		"outfit space" 210
 		"weapon capacity" 55
 		"engine capacity" 95
+		"h2h capacity" 5
 		"self destruct" .25
 		weapon
 			"blast radius" 27
@@ -125,6 +126,7 @@ ship "Marauder Bounder"
 		"outfit space" 240
 		"weapon capacity" 80
 		"engine capacity" 115
+		"h2h capacity" 18
 		"self destruct" .25
 		weapon
 			"blast radius" 35
@@ -235,6 +237,7 @@ ship "Marauder Falcon"
 		"outfit space" 580
 		"weapon capacity" 265
 		"engine capacity" 165
+		"h2h capacity" 80
 		"self destruct" .15
 		weapon
 			"blast radius" 170
@@ -366,6 +369,7 @@ ship "Marauder Firebird"
 		"outfit space" 450
 		"weapon capacity" 175
 		"engine capacity" 110
+		"h2h capacity" 25
 		"self destruct" .25
 		weapon
 			"blast radius" 110
@@ -482,6 +486,7 @@ ship "Marauder Leviathan"
 		"outfit space" 680
 		"weapon capacity" 265
 		"engine capacity" 140
+		"h2h capacity" 69
 		"self destruct" .15
 		weapon
 			"blast radius" 90
@@ -605,6 +610,7 @@ ship "Marauder Manta"
 		"outfit space" 390
 		"weapon capacity" 155
 		"engine capacity" 110
+		"h2h capacity" 11
 		"self destruct" .25
 		weapon
 			"blast radius" 90
@@ -734,6 +740,7 @@ ship "Marauder Quicksilver"
 		"outfit space" 265
 		"weapon capacity" 65
 		"engine capacity" 75
+		"h2h capacity" 7
 		"self destruct" .25
 		weapon
 			"blast radius" 45
@@ -836,6 +843,7 @@ ship "Marauder Raven"
 		"outfit space" 310
 		"weapon capacity" 115
 		"engine capacity" 110
+		"h2h capacity" 14
 		"self destruct" .25
 		weapon
 			"blast radius" 65
@@ -944,6 +952,7 @@ ship "Marauder Splinter"
 		"outfit space" 450
 		"weapon capacity" 165
 		"engine capacity" 110
+		"h2h capacity" 22
 		"self destruct" .25
 		weapon
 			"blast radius" 60

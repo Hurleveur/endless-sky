@@ -231,7 +231,8 @@ void ShipInfoDisplay::UpdateAttributes(const Ship &ship, const Depreciation &dep
 		"    weapon capacity:", "weapon capacity",
 		"    engine capacity:", "engine capacity",
 		"gun ports free:", "gun ports",
-		"turret mounts free:", "turret mounts"
+		"turret mounts free:", "turret mounts",
+		"h2h capacity:", "h2h capacity"
 	};
 	for(unsigned i = 1; i < NAMES.size(); i += 2)
 		chassis[NAMES[i]] = attributes.Get(NAMES[i]);
