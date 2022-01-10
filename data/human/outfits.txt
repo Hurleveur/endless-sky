@@ -388,6 +388,7 @@ outfit "Security Station"
 	"mass" 2
 	"outfit space" -2
 	"capture defense" 3.4
+	"defense"
 	"unplunderable" 1
 	description "This is a specially designed barricade, which can be installed in the hallways of your ship as a powerful defense against anyone who boards you in an attempt to take over your ship."
 
