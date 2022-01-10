@@ -522,6 +522,7 @@ ship "Ibis"
 		"outfit space" 427
 		"weapon capacity" 147
 		"engine capacity" 109
+		"h2h capacity" 36
 		"shield generation" 3.5
 		"shield energy" 3.1
 		"hull repair rate" 1.2
@@ -782,6 +783,7 @@ ship "Peregrine"
 		"outfit space" 552
 		"weapon capacity" 220
 		"engine capacity" 171
+		"h2h capacity" 25
 		"shield generation" 3.9
 		"shield energy" 3.0
 		"hull repair rate" 1.5
@@ -866,6 +868,7 @@ ship "Petrel"
 		"engine capacity" 34
 		"shield generation" 0.36
 		"shield energy" 0.24
+		"h2h capacity" 3
 		"hull repair rate" 0.82
 		"hull energy" 0.54
 		"gaslining" 1
@@ -971,6 +974,7 @@ ship "Starling"
 		"outfit space" 316
 		"weapon capacity" 83
 		"engine capacity" 94
+		"h2h capacity" 15
 		"shield generation" 1.8
 		"shield energy" 1.2
 		"hull repair rate" 0.8
