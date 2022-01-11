@@ -309,6 +309,7 @@ ship "Bactrian"
 		"outfit space" 740
 		"weapon capacity" 300
 		"engine capacity" 180
+		"h2h capacity" 70
 		weapon
 			"blast radius" 260
 			"shield damage" 2600

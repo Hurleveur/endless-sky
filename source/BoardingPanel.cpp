@@ -341,11 +341,10 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		// if you board them but immediately "defend" they will let you return
 		// to your ship in peace. That is to allow the player to "cancel" if
 		// they did not really mean to try to capture the ship.
-		bool youAttack = (key == 'a' && (yourStartCrew > 1 || !victim->RequiredCrew()));
+		bool youAttack = (key == 'a' && (yourStartCrew > you->RequiredCrew() || !victim->RequiredCrew()));
 		// Civilian ships should never attack you.
-		bool isCivilian = (victim->Attributes().Category() == "Transport" || 
-						victim->Attributes().Category() == "Light Freighter" || 
-						victim->Attributes().Category() == "Heavy Freighter");
+		bool isCivilian = (victim->GetPersonality().IsAppeasing() || victim->GetPersonality().IsCoward()
+			|| victim->GetPersonality().IsTimid() || victim->GetPersonality().IsPacifist());
 		bool enemyAttacks = isCivilian ? false : defenseOdds.Odds(enemyStartCrew - victim->RequiredCrew(), yourStartCrew) > .5;
 		if(isFirstCaptureAction && !youAttack)
 			enemyAttacks = false;
@@ -456,15 +455,14 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			else if(enemyCasualties)
 				messages.back() += "They lose " + to_string(enemyCasualties) + " crew.";
 			
-			// If you have place for the enemy crew, they may consider surrendering.
-			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0)
+			// If you have place for the enemy crew, they may consider surrendering. TODO: MAKE IT GOVERNMENT SPECIFIC BY ATTRIBUTE
+			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0 && victim->GetGovernment()->Reputation() >= -1000.)
 			{
-				//double extraReputationCost = -GameData::PlayerGovernment()->Reputation() / 1000;
-				//extraReputationCost = max(1, extraReputationCost);
 				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 + isCivilian * 20 > Random::Int(100))
 				{
 					messages.push_back("Considering their hopeless situation, the " + to_string(vCrew));
 					messages.push_back("members left of the enemy crew join you.");
+					victim->GetGovernment()->Offend(ShipEvent::ASSIST, victim->CrewValue());
 					you->AddCrew(vCrew);
 					crewRep->AddReputation(vCrew);
 					victim->AddCrew(-vCrew);

@@ -32,7 +32,6 @@ ship "Albatross"
 		"outfit space" 672
 		"weapon capacity" 236
 		"engine capacity" 142
-		"h2h capacity" 75
 		"shield generation" 5.2
 		"shield energy" 4.6
 		"hull repair rate" 1.5
@@ -524,7 +523,6 @@ ship "Ibis"
 		"outfit space" 427
 		"weapon capacity" 147
 		"engine capacity" 109
-		"h2h capacity" 36
 		"shield generation" 3.5
 		"shield energy" 3.1
 		"hull repair rate" 1.2
@@ -787,7 +785,6 @@ ship "Peregrine"
 		"outfit space" 552
 		"weapon capacity" 220
 		"engine capacity" 171
-		"h2h capacity" 25
 		"shield generation" 3.9
 		"shield energy" 3.0
 		"hull repair rate" 1.5
@@ -980,7 +977,6 @@ ship "Starling"
 		"outfit space" 316
 		"weapon capacity" 83
 		"engine capacity" 94
-		"h2h capacity" 15
 		"shield generation" 1.8
 		"shield energy" 1.2
 		"hull repair rate" 0.8

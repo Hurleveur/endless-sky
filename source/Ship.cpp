@@ -599,8 +599,16 @@ void Ship::FinishLoading(bool isNewInstance)
 	baseAttributes.Set("gun ports", armament.GunCount());
 	baseAttributes.Set("turret mounts", armament.TurretCount());
 	if(!baseAttributes.Get("h2h capacity"))
-		baseAttributes.Set("h2h capacity", baseAttributes.Get("bunks") - baseAttributes.Get("required crew"));
-	
+	{
+		int h2hcap = baseAttributes.Get("required crew");
+		const string category = Attributes().Category();
+		// These kind of ships are not meant for combat, they only need one defensive guns
+		// for each crew maintaining the ship, any additional crew is likely to be people to be transported.
+		if(category != "Transport" && category != "Light Freighter"	&& category != "Heavy Freighter")
+			h2hcap += (baseAttributes.Get("bunks") - h2hcap) * 2;
+		baseAttributes.Set("h2h capacity", h2hcap);
+	}
+
 	if(addAttributes)
 	{
 		// Store attributes from an "add attributes" node in the ship's
