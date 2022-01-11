@@ -255,6 +255,7 @@ ship "Gull"
 		"outfit space" 311
 		"weapon capacity" 83
 		"engine capacity" 101
+		"h2h capacity" 13
 		"shield generation" 1.6
 		"shield energy" 1.1
 		"hull repair rate" 0.7
@@ -394,6 +395,7 @@ ship "Heron"
 		"outfit space" 2150
 		"weapon capacity" 470
 		"engine capacity" 800
+		"h2h capacity" 2000
 		"shield generation" 15
 		"shield energy" 1.8
 		"hull repair rate" 15
@@ -601,6 +603,7 @@ ship "Pelican"
 		"outfit space" 480
 		"weapon capacity" 157
 		"engine capacity" 144
+		"h2h capacity" 25
 		"shield generation" 2.7
 		"shield energy" 1.8
 		"hull repair rate" 1
@@ -683,6 +686,7 @@ ship "Penguin"
 		"outfit space" 109
 		"weapon capacity" 33
 		"engine capacity" 54
+		"h2h capacity" 3
 		"shield generation" 1
 		"shield energy" 0.5
 		"hull repair rate" 2
@@ -866,6 +870,7 @@ ship "Petrel"
 		"outfit space" 133
 		"weapon capacity" 33
 		"engine capacity" 34
+		"h2h capacity" 3
 		"shield generation" 0.36
 		"shield energy" 0.24
 		"h2h capacity" 3
@@ -925,6 +930,7 @@ ship "Puffin"
 		"cargo space" 8
 		"outfit space" 80
 		"engine capacity" 26
+		"h2h capacity" 2
 		"shield generation" 0.6
 		"shield energy" 0.4
 		"hull repair rate" 1.2

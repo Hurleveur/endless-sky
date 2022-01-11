@@ -243,7 +243,7 @@ tip "hull repair multiplier:"
 	`Modifies the amount of hull strength repaired per second by the given factor.`
 
 tip "h2h capacity:"
-	`By default ships have some more weapon space in their armory than they have required crew. If you want more, you need to install extra armories. Most hand to hand weapons require this capacity.`
+	`Generally, ships have as much weapon space as they need for the extra crew they may take to protect them. If you want more, you need to install extra armories. Most hand to hand weapons require this capacity.`
 
 tip "consumable:"
 	`This weapon will be destroyed after successful use.`

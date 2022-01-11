@@ -354,8 +354,8 @@ outfit "Armory"
 	category "Hand to Hand"
 	cost 50000
 	thumbnail "outfit/security station"
-	"h2h capacity" 50
-	"outfit space" -5
+	"h2h capacity" 10
+	"outfit space" -1
 	"unplunderable" 1
 	description "When trying to equip their crew with more weapons than initially planned by the ship's factories, you may find yourself lacking space for them. This outfit will allow you to install more."
 

@@ -599,7 +599,7 @@ void Ship::FinishLoading(bool isNewInstance)
 	baseAttributes.Set("gun ports", armament.GunCount());
 	baseAttributes.Set("turret mounts", armament.TurretCount());
 	if(!baseAttributes.Get("h2h capacity"))
-		baseAttributes.Set("h2h capacity", int(baseAttributes.Get("required crew") + baseAttributes.Get("bunks")) / 2 + 1);
+		baseAttributes.Set("h2h capacity", baseAttributes.Get("bunks") - baseAttributes.Get("required crew"));
 	
 	if(addAttributes)
 	{
