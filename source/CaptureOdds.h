@@ -49,7 +49,7 @@ public:
 	double AttackerPower(int attackingCrew) const;
 	double DefenderPower(int defendingCrew) const;
 	// Returns the name of the last used weapon.
-	const Outfit *LastUsedWeapon(const Ship &ship, bool isDefender) const;
+	const Outfit *LastUsedWeapon(const Ship &ship, bool isDefender, const char *attribute) const;
 	
 	
 private:

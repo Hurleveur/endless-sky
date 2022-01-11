@@ -154,12 +154,12 @@ double CaptureOdds::DefenderPower(int defendingCrew) const
 
 
 // We know the stronger weapon is the last used one.
-const Outfit *CaptureOdds::LastUsedWeapon(const Ship &ship, bool isDefender) const
+const Outfit *CaptureOdds::LastUsedWeapon(const Ship &ship, bool isDefender, const char *attribute) const
 {
-	const string attribute = (isDefender ? "capture defense" : "capture attack");
+	const string stat = (isDefender ? "capture defense" : "capture attack");
 	const Outfit *best = nullptr;
 	for(const auto &it : ship.Outfits())
-		if((!best || it.first->Get(attribute) > best->Get(attribute)) && it.second > 0)
+		if((it.first->Get(attribute) && it.second > 0 && (!best || it.first->Get(stat) > best->Get(stat))))
 			best = it.first;
 	return best;
 }
