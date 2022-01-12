@@ -332,7 +332,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		messages.push_back("The airlock blasts open. Combat has begun!");
 		messages.push_back("(It will end if you both choose to \"defend.\")");
 	}
-	else if((key == 'a' || key == 'd') && CanAttack())
+	else if(((key == 'a' && you->Crew() > you->RequiredCrew()) || key == 'd') && CanAttack())
 	{
 		int yourStartCrew = you->Crew();
 		int enemyStartCrew = victim->Crew();
@@ -341,7 +341,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		// if you board them but immediately "defend" they will let you return
 		// to your ship in peace. That is to allow the player to "cancel" if
 		// they did not really mean to try to capture the ship.
-		bool youAttack = (key == 'a' && (yourStartCrew > you->RequiredCrew() || !victim->RequiredCrew()));
+		bool youAttack = (key == 'a' || !victim->RequiredCrew()));
 		// Civilian ships should never attack you.
 		bool isCivilian = (victim->GetPersonality().IsAppeasing() || victim->GetPersonality().IsCoward()
 			|| victim->GetPersonality().IsTimid() || victim->GetPersonality().IsPacifist());
@@ -365,14 +365,14 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			
 			// There are as many rounds of combat as there is space on the ship to fight,
 			// and then we multiply it a bit so it does not take ages.
-			for(int round = 0; round < combatWidth * max(1, yourStartCrew / 50); ++round)
+			for(int round = 0; round < combatWidth * 2; ++round)
 			{
 				int yourCrew = Truncation(you->Crew() - you->RequiredCrew(), combatWidth);
 				int yourDefendingCrew = Truncation(you->Crew(), combatWidth);
 				int enemyCrew = Truncation(victim->Crew() - victim->RequiredCrew(), combatWidth);
 				int enemyDefendingCrew = Truncation(victim->Crew(), combatWidth);
 				
-				if(!yourCrew || !enemyCrew)
+				if(!yourDefendingCrew || !enemyDefendingCrew)
 					break;
 				
 				// Your chance of winning this round is equal to the ratio of
@@ -389,6 +389,8 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					break;
 				
 				const Outfit* last = nullptr;
+				// Consumables are only lost when a crew kills someone with it, 
+				// or when the one carrying it dies (if it's defensive).
 				if(Random::Real() * total >= yourPower)
 				{
 					if(enemyAttacks)
@@ -399,7 +401,8 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 							you->AddOutfit(last, -1);
 							defenseOdds.RefreshOdds(*victim, *you, true);
 						}
-						crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
+						if(last)
+							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
 
 						last = defenseOdds.LastUsedWeapon(*you, true, "");
 						if(last)
@@ -412,7 +415,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 							attackOdds.RefreshOdds(*you, *victim, false);
 						}
 					}
-					crewRep->AddReputation(-2);
+					crewRep->AddReputation(-2.);
 					you->AddCrew(-1);
 				}
 				else
@@ -431,8 +434,8 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 						{
 							you->AddOutfit(last, -1);
 							defenseOdds.RefreshOdds(*victim, *you, false);
+							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
 						}
-						crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
 						
 						last = attackOdds.LastUsedWeapon(*you, false, "");
 						if(last)
@@ -468,6 +471,9 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 					victim->AddCrew(-vCrew);
 				}
 			}
+			
+			if(you->Crew() <= you->RequiredCrew())
+				messages.emplace_back("You do not have any hired crew left.");
 			
 			// Check if either ship has been captured.
 			if(!crew)
