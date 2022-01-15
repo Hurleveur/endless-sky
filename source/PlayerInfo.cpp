@@ -1052,10 +1052,10 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 		if(ship->IsParked() || ship->IsDestroyed())
 			continue;
 
-		attraction += max(0., .6 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) 
-			(125. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration() ? ship->Acceleration() : 1.) /
-			(67.5 / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate() ? ship->TurnRate() : 1.) 
-			/ (ship->CanBeCarried() ? 2. : 1.);
+		attraction += max(0., .4 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) /
+			(ship->CanBeCarried() ? 2. : 
+			((100. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration()) +
+			(50. / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate())));
 		for(const Hardpoint &hardpoint : ship->Weapons())
 			if(hardpoint.GetOutfit())
 			{
