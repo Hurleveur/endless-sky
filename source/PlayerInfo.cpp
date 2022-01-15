@@ -1052,14 +1052,17 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 		if(ship->IsParked() || ship->IsDestroyed())
 			continue;
 
-		attraction += max(0., .4 * sqrt(ship->Attributes().Get("cargo space")) - 1.8);
+		attraction += max(0., .6 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) 
+			(125. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration() ? ship->Acceleration() : 1.) /
+			(67.5 / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate() ? ship->TurnRate() : 1.) 
+			/ (ship->CanBeCarried() ? 2. : 1.);
 		for(const Hardpoint &hardpoint : ship->Weapons())
 			if(hardpoint.GetOutfit())
 			{
 				const Outfit *weapon = hardpoint.GetOutfit();
 				
 				// Multiply the value of ammo given it is a cost you have to pay each time you shoot.
-				int64_t ammoCost = weapon->Ammo() ? ship->OutfitCount(weapon->Ammo()) * weapon->Ammo()->Cost() / ship->OutfitCount(weapon) * 4. : 1.;
+				int64_t ammoCost = weapon->Ammo() ? ship->OutfitCount(weapon->Ammo()) * weapon->Ammo()->Cost() / ship->OutfitCount(weapon) * 4 : 1;
 				if(!ammoCost)
 					continue;
 

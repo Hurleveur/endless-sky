@@ -144,6 +144,7 @@ government "Hai"
 	"friendly disabled hail" "friendly disabled hai"
 	"hostile hail" "hostile hai"
 	"hostile disabled hail" "hostile disabled hai"
+	raid "Unfettered Raid"
 
 # A government used for Hai mission escorts that are able to go through the wormhole.
 government "Hai (Wormhole Access)"
@@ -181,6 +182,7 @@ government "Hai (Unfettered)"
 	"friendly disabled hail" "friendly disabled unfettered"
 	"hostile hail" "hostile unfettered"
 	"hostile disabled hail" "hostile disabled unfettered"
+	raid "Unfettered Raid"
 
 government "Heliarch"
 	swizzle 0
@@ -294,6 +296,7 @@ government "Korath"
 		"Kor Sestor" -.01
 	
 	"player reputation" -10
+	raid "Korath Raid"
 
 government "Korath Nanobots"
 	"player reputation" -1000
@@ -506,6 +509,7 @@ government "Remnant"
 	"provoked on scan"
 	"friendly hail" "remnant uncontacted"
 	"hostile hail" "remnant uncontacted hostile"
+	raid "Korath Raid"
 
 government "Remnant (Research)"
 	"display name" "Remnant"
@@ -649,6 +653,7 @@ government "Wanderer"
 	"friendly disabled hail" "wanderer untranslated"
 	"hostile hail" "wanderer untranslated"
 	"hostile disabled hail" "wanderer untranslated"
+	raid "Unfettered Raid"
 
 # A dummy government used to prevent Hai from entering the wormhole in Waypoint/Ultima Thule, but allowing human merchants and other governments to enter.
 government "Wormhole Alpha"
