@@ -769,6 +769,8 @@ event "wanderers: unfettered invasion starts"
 		add fleet "Wanderer Flycatchers" 480
 		add fleet "Large Unfettered" 1200
 	"reputation: Hai (Unfettered)" <?= -100
+	government "Wanderer"
+		raid "Unfettered Raid"
 	government "Hai (Unfettered)"
 		"attitude toward"
 			"Wanderer" -.01
@@ -955,6 +957,8 @@ event "wanderers: the eye opens"
 			sprite planet/wormhole
 			distance 2331.95
 			period 2518.05
+	government "Wanderer"
+		remove raid "Unfettered Raid"
 	system Kaliptari
 		government "Wanderer"
 

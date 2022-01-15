@@ -1052,17 +1052,20 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 		if(ship->IsParked() || ship->IsDestroyed())
 			continue;
 
-		attraction += max(0., .4 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) /
-			(ship->CanBeCarried() ? 2. : 
+		// Calculate the agility of the given ship, the importance of this value will be reduced later.
+		double agility = 
 			((100. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration()) +
 			(50. / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate())));
+		attraction += max(0., .4 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) /
+			(ship->CanBeCarried() ? 2. : (agility > 1. ? (agility - 1.) / 3. + 1. : 1. - ((1. - agility) / 3.));
 		for(const Hardpoint &hardpoint : ship->Weapons())
 			if(hardpoint.GetOutfit())
 			{
 				const Outfit *weapon = hardpoint.GetOutfit();
 				
 				// Multiply the value of ammo given it is a cost you have to pay each time you shoot.
-				int64_t ammoCost = weapon->Ammo() ? ship->OutfitCount(weapon->Ammo()) * weapon->Ammo()->Cost() / ship->OutfitCount(weapon) * 4 : 1;
+				int64_t ammoCost = weapon->Ammo() ? ship->OutfitCount(weapon->Ammo()) * 
+					weapon->Ammo()->Cost() / ship->OutfitCount(weapon) * 4 : 1;
 				if(!ammoCost)
 					continue;
 
