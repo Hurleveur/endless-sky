@@ -1057,11 +1057,13 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 			if(hardpoint.GetOutfit())
 			{
 				const Outfit *weapon = hardpoint.GetOutfit();
-				double factor = 1.;
-				if(weapon->Ammo() && !ship->OutfitCount(weapon->Ammo()))
+				
+				// Multiply the value of ammo given it is a cost you have to pay each time you shoot.
+				int64_t ammoCost = weapon->Ammo() ? ship->OutfitCount(weapon->Ammo()) * weapon->Ammo()->Cost() / ship->OutfitCount(weapon) * 4. : 1.;
+				if(!ammoCost)
 					continue;
 
-				deterrence += .18 * sqrt(weapon->Cost() / 10000.) * weapon->AntiMissile() ? .25 : 1.;
+				deterrence += .18 * sqrt((weapon->Cost() + ammoCost) / 10000.) * (weapon->AntiMissile() ? .5 : 1.);
 			}
 	}
 
