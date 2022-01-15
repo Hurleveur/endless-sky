@@ -1057,12 +1057,11 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 			if(hardpoint.GetOutfit())
 			{
 				const Outfit *weapon = hardpoint.GetOutfit();
+				double factor = 1.;
 				if(weapon->Ammo() && !ship->OutfitCount(weapon->Ammo()))
 					continue;
-				double damage = weapon->ShieldDamage() + weapon->HullDamage()
-					+ (weapon->RelativeShieldDamage() * ship->Attributes().Get("shields"))
-					+ (weapon->RelativeHullDamage() * ship->Attributes().Get("hull"));
-				deterrence += .12 * damage / weapon->Reload();
+
+				deterrence += .18 * sqrt(weapon->Cost() / 10000.) * weapon->AntiMissile() ? .25 : 1.;
 			}
 	}
 
