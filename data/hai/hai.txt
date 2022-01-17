@@ -296,6 +296,45 @@ fleet "Unfettered Raid"
 	variant
 		"Shield Beetle (Jump)" 1
 		"Shield Beetle (Jump, Tracker)" 2
+	variant
+		"Shield Beetle (Jump, Tracker)" 4
+	variant
+		"Shield Beetle (Jump, Pulse)" 1
+		"Solifuge (Jump, Pulse)" 3
+		"Violin Spider (Pulse)" 18
+	variant
+		"Solifuge (Jump)" 1
+		"Solifuge (Jump)" 1
+		"Violin Spider" 18
+	variant
+		"Shield Beetle (Jump, Tracker)" 2
+		"Solifuge (Jump, Tracker)" 1
+		"Violin Spider" 6
+	variant
+		"Shield Beetle (Jump, Pulse)" 1
+		"Shield Beetle (Jump, Tracker)" 2
+	variant
+		"Solifuge (Jump, Pulse)" 1
+		"Violin Spider" 6
+		"Shield Beetle (Jump, Tracker)" 2
+	variant
+		"Shield Beetle (Jump)" 2
+		"Solifuge (Jump, Pulse)" 1
+	variant
+		"Shield Beetle (Jump)" 1
+		"Solifuge (Jump, Pulse)" 1
+		"Solifuge (Jump)" 1
+		"Violin Spider" 6
+	variant
+		"Shield Beetle (Jump)" 1
+		"Shield Beetle (Jump, Tracker)" 1
+		"Shield Beetle (Jump, Pulse)" 1
+	variant
+		"Solifuge (Jump)" 1
+		"Solifuge (Jump, Pulse)" 1
+		"Solifuge (Jump, Tracker)" 1
+		"Violin Spider" 9
+		"Violin Spider (Pulse)" 9
 
 shipyard "Hai Basics"
 	"Aphid"
