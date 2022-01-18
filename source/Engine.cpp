@@ -1263,8 +1263,8 @@ void Engine::EnterSystem()
 				CreateWeather(hazard, stellar.Position());
 	}
 
-	const set<const Fleet *> raidFleets = system->GetGovernment()->RaidFleets();
-	const Government *raidGovernment = !raidFleets.empty() ? raidFleets->GetGovernment() : nullptr;
+	const vector<const Fleet *> raidFleets = system->GetGovernment()->RaidFleets();
+	const Government *raidGovernment = !raidFleets.empty() ? raidFleets[0]->GetGovernment() : nullptr;
 	if(raidGovernment && raidGovernment->IsEnemy())
 	{
 		pair<double, double> factors = player.RaidFleetFactors();

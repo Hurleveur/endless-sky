@@ -1056,7 +1056,7 @@ pair<double, double> PlayerInfo::RaidFleetFactors() const
 		double agility = 
 			((100. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration()) +
 			(50. / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate()));
-		attraction += max(0., .4 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) /
+		attraction += max(0., .5 * sqrt(ship->Attributes().Get("cargo space")) - 1.8) /
 			(ship->CanBeCarried() ? 2. : (agility > 1. ? (agility - 1.) / 3. + 1. : 1. - ((1. - agility) / 3.)));
 		for(const Hardpoint &hardpoint : ship->Weapons())
 			if(hardpoint.GetOutfit())

@@ -83,7 +83,7 @@ public:
 	const std::string &Language() const;
 	// Pirate raids in this government's systems use these fleet definitions.
 	// If it is null, there are no pirate raids.
-	const set <const Fleet *> &RaidFleets() const;
+	const std::vector<const Fleet *> &RaidFleets() const;
 
 	// Check if, according to the politics stored by GameData, this government is
 	// an enemy of the given government right now.
@@ -138,7 +138,7 @@ private:
 	const Phrase *hostileHail = nullptr;
 	const Phrase *hostileDisabledHail = nullptr;
 	std::string language;
-	set<const Fleet *> raidFleets;
+	std::vector<const Fleet *> raidFleets;
 	double crewAttack = 1.;
 	double crewDefense = 2.;
 	bool provokedOnScan = false;
