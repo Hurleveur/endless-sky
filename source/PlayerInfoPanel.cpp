@@ -528,12 +528,12 @@ void PlayerInfoPanel::DrawPlayer(const Rectangle &bounds)
 	if(!attractionRating.empty() && !deterrenceRating.empty())
 	{
 		double attraction = max(0., min(1., .005 * (factors.first - factors.second - 2.)));
-		double prob = 1. - pow(1. - attraction, 10.);
+		double prob = 1. - pow(1. - attraction, 99.);
 
 		table.DrawGap(10);
 		table.DrawUnderline(dim);
 		table.Draw("piracy threat:", bright);
-		table.Draw(to_string(lround(100 * prob)) + "%", dim);
+		table.Draw(to_string(lround(100 * prob)) + "%", dim); // make it go higher than 100%
 		table.DrawGap(5);
 
 		// Format the attraction and deterrence levels with tens places, so it

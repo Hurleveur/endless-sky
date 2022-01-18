@@ -133,7 +133,11 @@ void Government::Load(const DataNode &node)
 		else if(child.Token(0) == "language" && child.Size() >= 2)
 			language = child.Token(1);
 		else if(child.Token(0) == "raid" && child.Size() >= 2)
-			raidFleet = GameData::Fleets().Get(child.Token(1));
+		{
+			raidFleets.clear();
+			for(auto i = 1; child.Size() > i; ++i)
+				raidFleets.emplace(GameData::Fleets().Get(child.Token(i)));
+		}
 		else if(child.Token(0) == "provoked on scan")
 			provokedOnScan = true;
 		else
@@ -297,9 +301,9 @@ const string &Government::Language() const
 
 // Pirate raids in this government's systems use this fleet definition. If
 // it is null, there are no pirate raids.
-const Fleet *Government::RaidFleet() const
+const set<const Fleet *> &Government::RaidFleets() const
 {
-	return raidFleet;
+	return raidFleets;
 }
 
 

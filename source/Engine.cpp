@@ -1263,20 +1263,24 @@ void Engine::EnterSystem()
 				CreateWeather(hazard, stellar.Position());
 	}
 
-	const Fleet *raidFleet = system->GetGovernment()->RaidFleet();
-	const Government *raidGovernment = raidFleet ? raidFleet->GetGovernment() : nullptr;
+	const set<const Fleet *> raidFleets = system->GetGovernment()->RaidFleets();
+	const Government *raidGovernment = !raidFleets.empty() ? raidFleets->GetGovernment() : nullptr;
 	if(raidGovernment && raidGovernment->IsEnemy())
 	{
 		pair<double, double> factors = player.RaidFleetFactors();
-		double attraction = .005 * (factors.first - factors.second - 2.);
-		if(attraction > 0.)
-			for(int i = 0; i < 10; ++i)
-				if(Random::Real() < attraction)
+		double threat = .005 * (factors.first - factors.second - 2.);
+		while(threat > 0.)
+		{
+			double misFortune = Random::Real() * threat >= 1. ? 1. : threat;
+			for(auto i = raidFleets.size(); i > 0; --i)
+				if(misFortune + threat > i / raidFleets.size())
 				{
-					raidFleet->Place(*system, newShips);
+					threat -= i / raidFleets.size();
+					raidFleets[i]->Place(*system, newShips);
 					Messages::Add("Your fleet has attracted the interest of a "
 							+ raidGovernment->GetName() + " raiding party.", Messages::Importance::Highest);
 				}
+		}
 	}
 
 	grudge.clear();
