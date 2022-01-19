@@ -2491,7 +2491,7 @@ fleet "pirate raid"
 	variant 3
 		"Scout (Speedy)" 3
 
-fleet "heavy pirate raid"
+fleet "large pirate raid"
 	government "Pirate"
 	names "pirate"
 	cargo 1
