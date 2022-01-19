@@ -2329,6 +2329,46 @@ fleet "Large Northern Pirates"
 		"Bactrian"
 		"Dagger" 3
 
+fleet "small pirate raid"
+	government "Pirate"
+	names "pirate"
+	cargo 1
+	personality
+		nemesis plunders harvests
+		confusion 30
+	variant 7
+		"Bounder"
+	variant 2
+		"Hawk (Bomber)"
+	variant 2
+		"Hawk (Plasma)"
+	variant 1
+		"Hawk (Speedy)" 2
+	variant 4
+		"Wasp (Gatling)" 2
+		"Wasp" 1
+	variant 4
+		"Wasp (Meteor)"
+		"Sparrow (Gatling)"
+		"Fury"
+	variant 4
+		"Wasp (Meteor)"
+		"Hawk (Rocket)"
+	variant 6
+		"Hawk (Speedy)"
+		"Sparrow" 2
+	variant 4
+		"Hawk (Bomber)" 1
+	variant 4
+		"Fury (Bomber)" 2
+	variant 6
+		"Berserker" 2
+	variant 6
+		"Clipper (Heavy)"
+	variant 6
+		"Clipper (Speedy)"
+		"Sparrow"
+
 fleet "pirate raid"
 	government "Pirate"
 	names "pirate"
@@ -2380,12 +2420,6 @@ fleet "pirate raid"
 	variant 1
 		"Modified Argosy (Blaster)"
 		"Raven (Afterburner)" 2
-	variant 2
-		"Falcon"
-	variant 1
-		"Falcon (Heavy)"
-	variant 1
-		"Falcon (Laser)"
 	variant 5
 		"Quicksilver (Proton)" 3
 	variant 2
@@ -2446,14 +2480,8 @@ fleet "pirate raid"
 		"Fury (Heavy)" 2
 		"Firebird (Missile)"
 	variant 2
-		"Leviathan"
-		"Firebird"
-	variant 2
 		"Leviathan (Laser)"
 		"Firebird"
-	variant 2
-		"Leviathan (Heavy)"
-		"Firebird (Plasma)"
 	variant 1
 		"Berserker" 3
 	variant 8
@@ -2462,6 +2490,49 @@ fleet "pirate raid"
 		"Berserker (Afterburner)" 2
 	variant 3
 		"Scout (Speedy)" 3
+
+fleet "heavy pirate raid"
+	government "Pirate"
+	names "pirate"
+	cargo 1
+	personality
+		nemesis plunders harvests
+		confusion 10
+	variant 60
+		"Falcon"
+		"Osprey"
+	variant 30
+		"Falcon (Heavy)"
+		"Headhunter (Particle)"
+	variant 30
+		"Falcon (Laser)"
+		"Manta (Proton)"
+	variant 60
+		"Leviathan"
+		"Firebird"
+	variant 30
+		"Leviathan (Heavy)"
+		"Firebird (Plasma)"
+	variant 30
+		"Leviathan (Laser)"
+		"Modified Argosy (Heavy)"
+	variant 40
+		"Vanguard"
+		"Marauder Quicksilver" 4
+	variant 20
+		"Vanguard (Missile)"
+		"Osprey (Missile)"
+	variant 20
+		"Vanguard (Particle)"
+		"Quicksilver" 5
+	variant 20
+		"Quicksilver" 15
+	variant 1
+		"Sparrow" 200
+	variant 30
+		"Osprey (Missile)"
+		"Modified Argosy (Missile)" 2
+		"Firebird (Missile)"
 
 fleet "Syndicate Extremists"
 	government "Syndicate (Extremist)"
