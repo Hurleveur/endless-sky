@@ -177,6 +177,34 @@ ship "Barb" "Barb (Gatling)"
 		"X1050 Ion Engines"
 
 
+ship "Barb" "Barb (Hyperdrive, Blaster)"
+	outfits
+		"Fuel Pod"
+		"Hyperdrive"
+		"LP036a Battery Pack"
+		"Modified Blaster"
+		"X1050 Ion Engines"
+		"nGVF-AA Fuel Cell"
+
+
+ship "Barb (Proton)" "Barb (Proton, Hyperdrive)"
+		"Fuel Pod"
+		"Heavy Laser"
+		"Hyperdrive"
+		"Supercapacitor"
+		"X1050 Ion Engines"
+		"nGVF-AA Fuel Cell"
+
+
+ship "Barb" "Barb (Hyperdrive, Turret)"
+	outfits
+		"Blaster Turret"
+		"Fuel Pod"
+		"Hyperdrive"
+		"Supercapacitor"
+		"X1050 Ion Engines"
+		"nGVF-AA Fuel Cell"
+
 
 ship "Bastion" "Bastion (Heavy)"
 	outfits
@@ -800,6 +828,29 @@ ship "Cruiser" "Cruiser (Mark II)"
 	turret "Heavy Anti-Missile Turret"
 
 
+ship "Dagger" "Dagger (Hyperdrive)"
+	outfits
+		"Beam Laser"
+		"Fuel Pod"
+		"Hyperdrive"
+		"Javelin" 40
+		"Javelin Mini Pod"
+		"Supercapacitor"
+		"X1200 Ion Steering"
+		"X1700 Ion Thruster"
+		"nGVF-AA Fuel Cell"
+
+
+ship "Dagger" "Dagger (Hyperdrive, Javelin)"
+	outfits
+		"Fuel Pod"
+		"Hyperdrive"
+		"Javelin" 200
+		"Javelin Pod"
+		"X1200 Ion Steering"
+		"X1700 Ion Thruster"
+		"nGVF-AA Fuel Cell"
+
 
 ship "Dreadnought" "Dreadnought (Jump)"
 	outfits
@@ -877,6 +928,41 @@ ship "Falcon" "Falcon (Plasma)"
 		"Impala Plasma Steering"
 		"Hyperdrive"
 
+
+ship "Finch" "Finch (Hyperdrive, Laser)"
+	outfits
+		"Beam Laser" 2
+		"Fuel Pod"
+		"Hyperdrive"
+		"Supercapacitor" 4
+		"X1200 Ion Steering"
+		"X1700 Ion Thruster"
+		"nGVF-BB Fuel Cell"
+
+
+ship "Finch" "Finch (Hyperdrive)"
+	outfits
+		"Beam Laser"
+		"Chipmunk Plasma Steering"
+		"Fuel Pod"
+		"Hyperdrive"
+		"Javelin" 40
+		"Javelin Mini Pod"
+		"LP036a Battery Pack"
+		"X1700 Ion Thruster"
+		"nGVF-BB Fuel Cell"
+
+
+ship "Finch" "Finch (Hyperdrive, Missile)"
+	outfits
+		"Chipmunk Plasma Thruster"
+		"Fuel Pod" 2
+		"Hyperdrive"
+		"Meteor Missile" 60
+		"Meteor Missile Launcher" 2
+		"Supercapacitor"
+		"X1200 Ion Steering"
+		"nGVF-AA Fuel Cell"
 
 
 ship "Firebird" "Firebird (Hai Shields)"
