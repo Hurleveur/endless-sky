@@ -1269,6 +1269,9 @@ void Engine::EnterSystem()
 	{
 		pair<double, double> factors = player.RaidFleetFactors();
 		double threat = .005 * (factors.first - factors.second - 2.);
+		for(auto fleet: system->Fleets())
+			threat -= sqrt(fleet.Get()->Strength() / 10000.) / fleet.Period()
+				* (fleet.Get()->GetGovernment()->IsEnemy(raidGovernment) ? 1. : -1.);
 		while(threat > 0.)
 		{
 			double misFortune = Random::Real() * threat >= 1. ? 1. : threat;
