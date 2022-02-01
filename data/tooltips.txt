@@ -332,6 +332,12 @@ tip "ramscoop:"
 tip "required crew / bunks:"
 	`How many crew members are required to operate this ship, and how many total bunks are available. Extra bunks can be used for passengers or extra crew.`
 
+tip "luxury bunks:"
+	`These bunks can be used for normal missions as well as transport of passengers with higher standarts.`
+
+tip "secure bunks:"
+	`These bunks can be used for slaves, prisonners, and about anyone that needs watch, or does not deserve a proper bunk.`
+
 tip "required crew:"
 	`Changes the number of crew members this ship requires by this amount.`
 

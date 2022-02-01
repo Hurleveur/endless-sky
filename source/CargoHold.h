@@ -33,6 +33,14 @@ class System;
 // will not fit it must be sold off.
 class CargoHold {
 public:
+	enum class PassengerType : int {
+		NORMAL,
+		LUXURY,
+		SECURE
+	};
+
+
+public:
 	void Clear();
 
 	// Load the cargo manifest from a DataFile. This must be done after the
@@ -54,9 +62,11 @@ public:
 	bool IsEmpty() const;
 
 	// Set the number of free bunks for passengers.
-	void SetBunks(int count);
-	int BunksFree() const;
-	int Passengers() const;
+	void SetBunks(int count, PassengerType type = PassengerType::NORMAL);
+	int BunksFree(PassengerType type) const;
+	int Passengers(PassengerType type) const;
+	static PassengerType PassengerTypeFromString(const std::string &type);
+	std::string PassengerTypeToString(PassengerType type);
 
 	// Normal cargo:
 	int Get(const std::string &commodity) const;
@@ -71,7 +81,7 @@ public:
 	// Note: some missions may have cargo that takes up 0 space, but should
 	// still show up on the cargo listing.
 	const std::map<const Mission *, int> &MissionCargo() const;
-	const std::map<const Mission *, int> &PassengerList() const;
+	const std::map<const Mission *, pair<int, PassengerType>> &PassengerList() const;
 
 	// For all the transfer functions, the "other" can be null if you simply want
 	// the commodity to "disappear" or, if the "amount" is negative, to have an
@@ -79,7 +89,7 @@ public:
 	int Transfer(const std::string &commodity, int amount, CargoHold &to);
 	int Transfer(const Outfit *outfit, int amount, CargoHold &to);
 	int Transfer(const Mission *mission, int amount, CargoHold &to);
-	int TransferPassengers(const Mission *mission, int amount, CargoHold &to);
+	int TransferPassengers(const Mission *mission, int amount, PassengerType type, CargoHold &to);
 	// Transfer as much as the given cargo hold has capacity for. The priority is
 	// first mission cargo, then spare outfits, then ordinary commodities.
 	void TransferAll(CargoHold &to, bool transferPassengers = true);
@@ -108,13 +118,14 @@ public:
 private:
 	// Use -1 to indicate unlimited capacity.
 	int size = -1;
-	int bunks = -1;
+	std::map<PassengerType, int> bunks = {{PassengerType::NORMAL, -1},
+	{PassengerType::LUXURY, -1}, {PassengerType::SECURE, -1}};
 
 	// Track how many objects of each type are being carried:
 	std::map<std::string, int> commodities;
 	std::map<const Outfit *, int> outfits;
 	std::map<const Mission *, int> missionCargo;
-	std::map<const Mission *, int> passengers;
+	std::map<const Mission *, pair<int, PassengerType>> passengers;
 };
 
 

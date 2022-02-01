@@ -251,28 +251,55 @@ bool CargoHold::IsEmpty() const
 
 
 // Set the number of free bunks for passengers.
-void CargoHold::SetBunks(int count)
+void CargoHold::SetBunks(int count, PassengerType type)
 {
-	bunks = count;
+	bunks[type] = count;
 }
 
 
 
 // Check how many bunks are free.
-int CargoHold::BunksFree() const
+int CargoHold::BunksFree(PassengerType type) const
 {
-	return bunks - Passengers();
+	return bunks[type] - Passengers(type);
 }
 
 
 
 // Check how many bunks are occupied by passengers.
-int CargoHold::Passengers() const
+int CargoHold::Passengers(PassengerType type) const
 {
 	int count = 0;
 	for(const auto &it : passengers)
-		count += it.second;
+		if(type == it.second.second)
+			count += it.second.first;
 	return count;
+}
+
+
+
+// Return what kind of passenger that name corresponds to.
+CargoHold::PassengerType CargoHold::PassengerTypeFromString(const string &type)
+{
+	if(type == "passengers")
+		return PassengerType::NORMAL;
+	else if(type == "luxury passengers")
+		return PassengerType::LUXURY;
+	else if(type == "secure passengers")
+		return PassengerType::SECURE;
+}
+
+
+
+// Return what kind of name the passenger type corresponds to.
+std::string CargoHold::PassengerTypeToString(PassengerType type)
+{
+	if(type == PassengerType::NORMAL)
+		return "";
+	else if(type == PassengerType::LUXURY)
+		return "luxury ";
+	else if(type == PassengerType::SECURE)
+		return "secure ";
 }
 
 
@@ -307,8 +334,8 @@ int CargoHold::Get(const Mission *mission) const
 // Check how many passengers for the given mission are being carried.
 int CargoHold::GetPassengers(const Mission *mission) const
 {
-	map<const Mission *, int>::const_iterator it = passengers.find(mission);
-	return (it == passengers.end() ? 0 : it->second);
+	map<const Mission *, pair<int, PassengerType>>::const_iterator it = passengers.find(mission);
+	return (it == passengers.end() ? 0 : it->second.first);
 }
 
 
@@ -338,7 +365,7 @@ const map<const Mission *, int> &CargoHold::MissionCargo() const
 
 
 // Access the mission passenger map directly.
-const map<const Mission *, int> &CargoHold::PassengerList() const
+const map<const Mission *, pair<int, CargoHold::PassengerType>> &CargoHold::PassengerList() const
 {
 	return passengers;
 }
@@ -409,21 +436,22 @@ int CargoHold::Transfer(const Mission *mission, int amount, CargoHold &to)
 
 
 // Transfer mission passengers from one cargo hold to another.
-int CargoHold::TransferPassengers(const Mission *mission, int amount, CargoHold &to)
+int CargoHold::TransferPassengers(const Mission *mission, int amount, PassengerType type, CargoHold &to)
 {
 	// A negative amount means a transfer in the opposite direction.
 	if(amount < 0)
-		return -to.TransferPassengers(mission, -amount, *this);
+		return -to.TransferPassengers(mission, -amount, type, *this);
 
 	// Check if the destination cargo hold has a limit on the number of bunks.
 	amount = min(amount, GetPassengers(mission));
-	if(to.bunks >= 0)
-		amount = max(0, min(amount, to.BunksFree()));
+	if(to.bunks[type] >= 0)
+		amount = max(0, min(amount, to.BunksFree(type)));
 
 	if(amount)
 	{
-		passengers[mission] -= amount;
-		to.passengers[mission] += amount;
+		passengers[mission].first -= amount;
+		to.passengers[mission].second = type;
+		to.passengers[mission].first += amount;
 	}
 	return amount;
 }
@@ -436,7 +464,7 @@ void CargoHold::TransferAll(CargoHold &to, bool transferPassengers)
 {
 	if(transferPassengers)
 		for(const auto &it : passengers)
-			TransferPassengers(it.first, it.second, to);
+			TransferPassengers(it.first, it.second.first, it.second.second, to);
 	// Handle zero-size mission cargo correctly. For mission cargo, having an
 	// entry in the map, but with a size of zero, is different than not having
 	// an entry at all.

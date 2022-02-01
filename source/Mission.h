@@ -96,6 +96,7 @@ public:
 	std::string IllegalCargoMessage() const;
 	bool FailIfDiscovered() const;
 	int Passengers() const;
+	CargoHold::PassengerType PassengerType() const;
 	// The mission must be completed by this deadline (if there is a deadline).
 	const Date &Deadline() const;
 	// If this mission's deadline was before the given date and it has not been
@@ -206,6 +207,7 @@ private:
 	std::string illegalCargoMessage;
 	bool failIfDiscovered = false;
 	int passengers = 0;
+	CargoHold::PassengerType passengerType = CargoHold::PassengerType::NORMAL;
 	// Parameters for generating random passenger amounts:
 	int passengerLimit = 0;
 	double passengerProb = 0.;

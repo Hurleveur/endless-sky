@@ -84,12 +84,10 @@ mission "Paradise Job: Newlyweds"
 	repeat
 	deadline
 	description "This pair of newlyweds seeks passage to reach their honeymoon on <destination> by <date>, along with <tons> of their wedding gifts. They will pay you <payment> to take them there."
-	passengers 2
+	"luxury passengers" 2
 	cargo "wedding gifts" 2 4
 	to offer
 		random < 10
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "paradise"
 	destination
@@ -154,14 +152,12 @@ mission "Transport partiers [1]"
 	job
 	repeat
 	description "This group of <bunks> university students is willing to pay <payment> to have a huge party on <destination>, along with <tons> of their completely legal pharmaceuticals."
-	passengers 7 12
+	"luxury passengers" 7 12
 	cargo "pharmaceuticals" 2 4
 	illegal 1000 `It turns out that the "completely legal pharmaceuticals" in your hold are not so completely legal after all. The officers who confiscate the goods spend a long time talking with one of the students, whom you suspect to be politically connected. You're not surprised by the small size of the fine you receive as well as the fact that nobody was arrested.`
 	stealth
 	to offer
 		random < 10
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "paradise"
 	destination
@@ -179,12 +175,10 @@ mission "Transport partiers [2]"
 	job
 	repeat
 	description "This group of <bunks> university students is willing to pay <payment> to have a huge party on <destination>, along with <tons> of their snacks and school supplies."
-	passengers 7 12
+	"luxury passengers" 7 12
 	cargo "snacks and school supplies" 2 4
 	to offer
 		random < 10
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "paradise"
 	destination
@@ -371,11 +365,9 @@ mission "Transport high-class tourists"
 	description "Bring <bunks> outrageously wealthy tourists on a fabulous journey to the wild and exotic world of <destination>. Payment is <payment>."
 	job
 	repeat
-	passengers 8 22
+	"luxury passengers" 8 22
 	to offer
 		random < 10
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "paradise"
 	destination
@@ -427,12 +419,10 @@ mission "Paradise Job: Parolees"
 	job
 	repeat
 	description `These <bunks> non-violent repeat offenders have accepted longer community service sentences that better use their skills in return for serving their time on the Paradise World of <destination>. Transport them to their new home to carry out their service. The payment is <payment>.`
-	passengers 20 4 .1
+	"secure passengers" 20 4 .1
 	to offer
 		random < 15
 		"passenger space" > 50
-	on offer
-		require "Brig"
 	source
 		attributes "mining" "fishing" "textiles" "factory" "farming" "oil"
 	destination
@@ -451,12 +441,10 @@ mission "Paradise Job: Debtors"
 	job
 	repeat
 	description `These <bunks> poor souls have bankrupted themselves attempting to live beyond their means. Due to media scrutiny on the issue, the local government will pay you <payment> to transport them to <destination> where they can "make something useful of themselves."`
-	passengers 20 4 .1
+	"secure passengers" 20 4 .1
 	to offer
 		random < 15
 		"passenger space" > 50
-	on offer
-		require "Brig"
 	source
 		attributes "paradise"
 	destination
@@ -475,14 +463,12 @@ mission "Paradise Job: Retirees"
 	job
 	repeat
 	description "This coterie of <bunks> wealthy retirees is willing to pay <payment> to be transported in style to <destination>, along with <tons> of their most treasured possessions."
-	passengers 7 12 .6
+	"luxury passengers" 7 12 .6
 	cargo "treasured possessions" 7 12 .2
 	to offer
 		random < 10
 		"passenger space" > 30
 		"cargo space" > 120
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "frontier" "dirt belt" "south" "farming" "mining" "rim" "forest" "urban"
 	destination
@@ -500,12 +486,10 @@ mission "Paradise Job: Wilderness Retreat"
 	job
 	repeat
 	description `Bring <bunks> pseudo-celebrities and wealthy tourists to the wild and untamed world of <destination> for a "Wilderness Retreat." Payment is <payment>.`
-	passengers 10 4 .1
+	"luxury passengers" 10 4 .1
 	to offer
 		random < 10
 		"passenger space" > 30
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "urban" "near earth" "core" "paradise"
 	destination

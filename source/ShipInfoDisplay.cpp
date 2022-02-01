@@ -185,6 +185,18 @@ void ShipInfoDisplay::UpdateAttributes(const Ship &ship, const Depreciation &dep
 	attributeLabels.push_back("required crew / bunks:");
 	attributeValues.push_back(Format::Number(ship.RequiredCrew())
 		+ " / " + Format::Number(attributes.Get("bunks")));
+	double specialBunks = attributes.Get("secure bunks");
+	if(specialBunks)
+	{
+		attributeLabels.push_back("    secure bunks:");
+		attributeValues.push_back(Format::Number(specialBunks));
+	}
+	specialBunks = attributes.Get("luxury bunks");
+	if(specialBunks)
+	{
+		attributeLabels.push_back("    luxury bunks:");
+		attributeValues.push_back(Format::Number(specialBunks));
+	}
 	attributesHeight += 20;
 	attributeLabels.push_back(isGeneric ? "fuel capacity:" : "fuel:");
 	double fuelCapacity = attributes.Get("fuel capacity");

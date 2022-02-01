@@ -171,8 +171,9 @@ void Mission::Load(const DataNode &node)
 					grand.PrintTrace("Warning: Deprecated use of \"stealth\" and \"illegal\" as a child of \"cargo\". They are now mission-level properties:");
 			}
 		}
-		else if(child.Token(0) == "passengers" && child.Size() >= 2)
+		else if((child.Token(0)[:-11] == "passengers") && child.Size() >= 2)
 		{
+			passengerType = CargoHold::PassengerTypeFromString(child.Token(0));
 			passengers = child.Value(1);
 			if(child.Size() >= 3)
 				passengerLimit = child.Value(2);
@@ -320,7 +321,7 @@ void Mission::Save(DataWriter &out, const string &tag) const
 		if(cargoSize)
 			out.Write("cargo", cargo, cargoSize);
 		if(passengers)
-			out.Write("passengers", passengers);
+			out.Write(CargoHold::PassengerTypeToString(passengerType) + "passengers", passengers);
 		if(illegalCargoFine)
 			out.Write("illegal", illegalCargoFine, illegalCargoMessage);
 		if(failIfDiscovered)
@@ -597,6 +598,13 @@ int Mission::Passengers() const
 
 
 
+CargoHold::PassengerType PassengerType() const
+{
+	return passengerType;
+}
+
+
+
 // The mission must be completed by this deadline (if there is a deadline).
 const Date &Mission::Deadline() const
 {
@@ -709,7 +717,9 @@ bool Mission::HasSpace(const PlayerInfo &player) const
 	if(player.Flagship())
 		extraCrew = player.Flagship()->Crew() - player.Flagship()->RequiredCrew();
 	return (cargoSize <= player.Cargo().Free() + player.Cargo().CommoditiesSize()
-		&& passengers <= player.Cargo().BunksFree() + extraCrew);
+		&& passengers <= player.Cargo().BunksFree() + extraCrew
+		&& luxuryPassengers <= player.Cargo().LuxuryBunksFree()
+		&& securePassengers <= player.Cargo().SecureBunksFree());
 }
 
 
@@ -717,7 +727,9 @@ bool Mission::HasSpace(const PlayerInfo &player) const
 // Check if this mission's cargo can fit entirely on the referenced ship.
 bool Mission::HasSpace(const Ship &ship) const
 {
-	return (cargoSize <= ship.Cargo().Free() && passengers <= ship.Cargo().BunksFree());
+	return (cargoSize <= ship.Cargo().Free() && passengers <= ship.Cargo().BunksFree()
+		&& luxuryPassengers <= ship.Cargo().LuxuryBunksFree()
+		&& securePassengers <= ship.Cargo().SecureBunksFree());
 }
 
 
@@ -822,18 +834,24 @@ string Mission::BlockedMessage(const PlayerInfo &player)
 
 	int cargoNeeded = cargoSize;
 	int bunksNeeded = passengers;
+	int luxuryBunksNeeded = luxuryPassengers;
+	int secureBunksNeeded = securePassengers;
 	if(player.GetPlanet())
 	{
 		cargoNeeded -= (player.Cargo().Free() + player.Cargo().CommoditiesSize());
 		bunksNeeded -= (player.Cargo().BunksFree() + extraCrew);
+		luxuryBunksNeeded -= player.Cargo().LuxuryBunksFree();
+		secureBunksNeeded -= player.Cargo().SecureBunksFree();
 	}
 	else
 	{
 		// Boarding a ship, so only use the flagship's space.
 		cargoNeeded -= flagship->Cargo().Free();
 		bunksNeeded -= flagship->Cargo().BunksFree();
+		luxuryBunksNeeded -= flagship.Cargo().LuxuryBunksFree();
+		secureBunksNeeded -= flagship.Cargo().SecureBunksFree();
 	}
-	if(cargoNeeded < 0 && bunksNeeded < 0)
+	if(cargoNeeded < 0 && bunksNeeded < 0 && luxuryBunksNeeded < 0 && secureBunksNeeded < 0)
 		return "";
 
 	map<string, string> subs;
@@ -847,6 +865,11 @@ string Mission::BlockedMessage(const PlayerInfo &player)
 	ostringstream out;
 	if(bunksNeeded > 0)
 		out << (bunksNeeded == 1 ? "another bunk" : to_string(bunksNeeded) + " more bunks");
+	if(luxuryBunksNeeded > 0)
+		out << " of which " + to_string(luxuryBunksNeeded) + " need to be luxurious";
+	if(secureBunksNeeded > 0)
+		out << (luxuryBunksNeeded > 0 ? " and " + " of which ") + to_string(secureBunksNeeded) + " need to be secure";
+
 	if(bunksNeeded > 0 && cargoNeeded > 0)
 		out << " and ";
 	if(cargoNeeded > 0)

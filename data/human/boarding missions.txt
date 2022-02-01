@@ -578,7 +578,7 @@ mission "Slave Crew Rescue (Brig Variant)"
 	invisible
 	assisting
 	deadline 1
-	passengers 1
+	"secure passengers" 1
 	to offer
 		random < 10
 		not "Slave Crew Rescue (No Brig Variant): offered"
@@ -588,7 +588,6 @@ mission "Slave Crew Rescue (Brig Variant)"
 		not attributes "automaton"
 	destination "Earth"
 	on offer
-		require "Brig"
 		conversation
 			branch "boarding alone" "boarding with a big boarding party"
 				"flagship crew" < 3

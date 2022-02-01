@@ -1918,11 +1918,9 @@ mission "Wealthy tourists out"
 	job
 	repeat
 	description "These <bunks> wealthy tourists want to see <destination>. They are willing to pay you <payment>."
-	passengers 2 10 .9
+	"luxury passengers" 2 10 .9
 	to offer
 		random < 75
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "rich" "urban"
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
@@ -1983,11 +1981,9 @@ mission "Wealthy tourists back"
 	job
 	repeat
 	description "These <bunks> wealthy tourists are headed home to <destination>. They are willing to pay you <payment>."
-	passengers 2 10 .9
+	"luxury passengers" 2 10 .9
 	to offer
 		random < 75
-	on offer
-		require "Luxury Accommodations"
 	source
 		attributes "tourism"
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
@@ -2226,7 +2222,7 @@ mission "Prisoners [0]"
 	job
 	repeat
 	description "Bring <bunks> petty criminals to <destination>, where they will serve their sentences as mine laborers. Payment is <payment>."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 	destination
@@ -2236,8 +2232,6 @@ mission "Prisoners [0]"
 		attributes "north" "south" "rim" "frontier" "core"
 	to offer
 		random < 15
-	on offer
-		require "Brig"
 	on visit
 		dialog phrase "generic passenger on visit"
 	on complete
@@ -2249,11 +2243,9 @@ mission "Prisoners [1]"
 	job
 	repeat
 	description "Transport <bunks> petty criminals to <destination>, where they will serve their sentences as factory laborers. Payment is <payment>."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	to offer
 		random < 15
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 	destination
@@ -2272,11 +2264,9 @@ mission "Prisoners [2]"
 	job
 	repeat
 	description "Transport <bunks> petty criminals to <destination>, where they will serve their sentences as domestic servants. Payment is <payment>."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	to offer
 		random < 15
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 	destination
@@ -2294,11 +2284,9 @@ mission "Prisoners [3]"
 	job
 	repeat
 	description "Transport <bunks> petty criminals to a penal colony on <destination>. Payment is <payment>."
-	passengers 2 15 .9
+	"secure passengers" 2 15 .9
 	to offer
 		random < 15
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 	destination
@@ -2316,12 +2304,10 @@ mission "Prisoners [4]"
 	job
 	repeat
 	description "Transport <bunks> violent felons to a penal colony on <destination>. Payment is <payment>."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	to offer
 		random < 10
 		"combat rating" > 50
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 	destination
@@ -2848,15 +2834,13 @@ mission "Bounty Hunting (Big)"
 mission "Bounty Hunting (Small, Boarding, Entering)"
 	name "Stolen ship near <system>"
 	description "A wanted criminal is fleeing in a stolen ship, the <npc>, which is about to enter this system. Disable and board the vessel and bring the criminal to <destination> to stand trial on <date>. Reward for capture: <payment>."
-	passengers 1
+	"secure passengers" 1
 	deadline 14
 	repeat
 	job
 	to offer
 		"combat rating" > 80
 		random < 15
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 		attributes "rim" "south" "north" "dirt belt" "core" "frontier"
@@ -3008,15 +2992,13 @@ mission "Bounty Hunting (Big, Hidden)"
 mission "Bounty Hunting (Medium, Boarding, Entering)"
 	name "Stolen warship near <system>"
 	description "A wanted criminal and several accomplices are fleeing in a stolen warship, the <npc>, which is about to enter this system. Disable and board the vessel and bring the criminals to <destination> to stand trial on <date>. Reward for capture: <payment>."
-	passengers 4
+	"secure passengers" 4
 	deadline 14
 	repeat
 	job
 	to offer
 		"combat rating" > 200
 		random < 15
-	on offer
-		require "Brig"
 	source
 		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
 		attributes "rim" "south" "north" "dirt belt" "core" "frontier"

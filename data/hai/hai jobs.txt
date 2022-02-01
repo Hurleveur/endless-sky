@@ -129,12 +129,11 @@ mission "Wealthy Hai [1]"
 	job
 	repeat
 	description "This wealthy family of <bunks> Hai will pay <payment> for a smooth and fast journey to <planet> by <date>."
-	passengers 2 4 .8
+	"luxury passengers" 2 4 .8
 	deadline
 	to offer
 		random < 70
 	on offer
-		require "Luxury Accommodations"
 		require "Quantum Keystone"
 	source
 		government "Hai"
@@ -152,12 +151,11 @@ mission "Wealthy Hai [2]"
 	job
 	repeat
 	description "This wealthy family of <bunks> Hai will pay <payment> for a smooth and fast journey to <planet> by <date>."
-	passengers 2 4 .8
+	"luxury passengers" 2 4 .8
 	deadline
 	to offer
 		random < 30
 	on offer
-		require "Luxury Accommodations"
 		require "Quantum Keystone"
 	source
 		government "Hai"
@@ -1305,7 +1303,7 @@ mission "Hai Prisoner Roleplay"
 	job
 	repeat
 	description "A group of Hai want to experience what it's like to be human criminals. Transport them to <planet> in your brig. Payment is <payment>."
-	passengers 3 20
+	"secure passengers" 3 20
 	to offer
 		random < 5
 	source
@@ -1313,8 +1311,6 @@ mission "Hai Prisoner Roleplay"
 	destination
 		distance 3 7
 		government "Hai"
-	on offer
-		require "Brig"
 	on visit
 		dialog phrase "generic passenger on visit"
 	on complete

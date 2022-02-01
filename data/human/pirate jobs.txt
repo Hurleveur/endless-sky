@@ -1663,14 +1663,12 @@ mission "Slave Transport [0]"
 	job
 	repeat
 	description "A pirate on <planet> has bought slaves from a local warlord. Transfer these <bunks> slaves to <destination> for <payment>. Slavery is punishable by death throughout the galaxy, so this may be a dangerous job to take."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	illegal -1
 	to offer
 		random < 25
 		"reputation: Pirate" > 0
 		"combat rating" > 1100
-	on offer
-		require "Brig"
 	source
 		government "Pirate"
 	destination
@@ -1687,14 +1685,12 @@ mission "Slave Transport [1]"
 	job
 	repeat
 	description "A pirate on <planet> has bought slaves from a local warlord. Transfer these <bunks> slaves to <destination> for <payment>. Slavery is punishable by death throughout the galaxy, so this may be a dangerous job to take."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	illegal -1
 	to offer
 		random < 25
 		"reputation: Pirate" > 0
 		"combat rating" > 1100
-	on offer
-		require "Brig"
 	source
 		government "Pirate"
 	destination
@@ -1711,14 +1707,12 @@ mission "Slave Transport [2]"
 	job
 	repeat
 	description "A pirate on <planet> has bought slaves from a local warlord. Transfer these <bunks> slaves to <destination> for <payment>. Slavery is punishable by death throughout the galaxy, so this may be a dangerous job to take."
-	passengers 2 10 .9
+	"secure passengers" 2 10 .9
 	illegal -1
 	to offer
 		random < 25
 		"reputation: Pirate" > 0
 		"combat rating" > 1100
-	on offer
-		require "Brig"
 	source
 		government "Pirate"
 	destination
@@ -1737,14 +1731,12 @@ mission "Bulk Slave Transport [0]"
 	job
 	repeat
 	description "A pirate on <planet> has bought slaves from a local warlord. Transfer these <bunks> slaves to <destination> for <payment>. Slavery is punishable by death throughout the galaxy, so this may be a dangerous job to take."
-	passengers 10 4 .1
+	"secure passengers" 10 4 .1
 	illegal -1
 	to offer
 		random < 15
 		"reputation: Pirate" > 0
 		"combat rating" > 3000
-	on offer
-		require "Brig"
 	source
 		government "Pirate"
 	destination
@@ -1761,14 +1753,12 @@ mission "Bulk Slave Transport [1]"
 	job
 	repeat
 	description "A pirate on <planet> has bought slaves from a local warlord. Transfer these <bunks> slaves to <destination> for <payment>. Slavery is punishable by death throughout the galaxy, so this may be a dangerous job to take."
-	passengers 10 4 .1
+	"secure passengers" 10 4 .1
 	illegal -1
 	to offer
 		random < 15
 		"reputation: Pirate" > 0
 		"combat rating" > 3000
-	on offer
-		require "Brig"
 	source
 		government "Pirate"
 	destination

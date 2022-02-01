@@ -50,10 +50,14 @@ void HiringPanel::Draw()
 	Information info;
 
 	int flagshipBunks = flagship.Attributes().Get("bunks");
+	int flagshipLuxuryBunks = flagship.Attributes().Get("luxury bunks");
+	int flagshipSecureBunks = flagship.Attributes().Get("secure bunks");
 	int flagshipRequired = flagship.RequiredCrew();
 	int flagshipExtra = flagship.Crew() - flagshipRequired;
 	int flagshipUnused = flagshipBunks - flagship.Crew();
 	info.SetString("flagship bunks", to_string(flagshipBunks));
+	info.SetString("flagship luxury bunks", to_string(flagshipLuxuryBunks));
+	info.SetString("flagship secure bunks", to_string(flagshipSecureBunks));
 	info.SetString("flagship required", to_string(flagshipRequired));
 	info.SetString("flagship extra", to_string(flagshipExtra));
 	info.SetString("flagship unused", to_string(flagshipUnused));

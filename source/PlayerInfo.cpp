@@ -2614,11 +2614,16 @@ void PlayerInfo::UpdateAutoConditions(bool isBoarding)
 	// Store special conditions for cargo and passenger space.
 	conditions["cargo space"] = 0;
 	conditions["passenger space"] = 0;
+	conditions["luxury passenger space"] = 0;
+	conditions["secure passenger space"] = 0;
 	for(const shared_ptr<Ship> &ship : ships)
 		if(!ship->IsParked() && !ship->IsDisabled() && ship->GetSystem() == system)
 		{
 			conditions["cargo space"] += ship->Attributes().Get("cargo space");
-			conditions["passenger space"] += ship->Attributes().Get("bunks") - ship->RequiredCrew();
+			conditions["passenger space"] += ship->Attributes().Get("bunks") + 
+				ship->Attributes().Get("luxury bunks") - ship->RequiredCrew();
+			conditions["luxury passenger space"] += ship->Attributes().Get("luxury bunks");
+			conditions["secure passenger space"] += ship->Attributes().Get("secure bunks");
 			++conditions["ships: " + ship->Attributes().Category()];
 		}
 	// If boarding a ship, missions should not consider the space available
@@ -2628,6 +2633,8 @@ void PlayerInfo::UpdateAutoConditions(bool isBoarding)
 	{
 		conditions["cargo space"] = flagship->Cargo().Free();
 		conditions["passenger space"] = flagship->Cargo().BunksFree();
+		conditions["luxury passenger space"] = flagship->Attributes().Get("luxury bunks");
+		conditions["secure passenger space"] = flagship->Attributes().Get("secure bunks");
 	}
 
 	// Clear any existing flagship system: and planet: conditions. (Note: '!' = ' ' + 1.)
