@@ -51,7 +51,7 @@ namespace {
 void CargoHold::Clear()
 {
 	size = 0;
-	bunks = 0;
+	bunks = {{PassengerType::NORMAL, 0}};
 	commodities.clear();
 	outfits.clear();
 	missionCargo.clear();
@@ -279,14 +279,14 @@ int CargoHold::Passengers(PassengerType type) const
 
 
 // Return what kind of passenger that name corresponds to.
-CargoHold::PassengerType CargoHold::PassengerTypeFromString(const string &type)
+static CargoHold::PassengerType CargoHold::PassengerTypeFromString(const string &type)
 {
-	if(type == "passengers")
-		return PassengerType::NORMAL;
-	else if(type == "luxury passengers")
+	if(type == "luxury passengers")
 		return PassengerType::LUXURY;
 	else if(type == "secure passengers")
 		return PassengerType::SECURE;
+	else
+		return PassengerType::NORMAL;
 }
 
 
@@ -294,12 +294,12 @@ CargoHold::PassengerType CargoHold::PassengerTypeFromString(const string &type)
 // Return what kind of name the passenger type corresponds to.
 std::string CargoHold::PassengerTypeToString(PassengerType type)
 {
-	if(type == PassengerType::NORMAL)
-		return "";
-	else if(type == PassengerType::LUXURY)
+	if(type == PassengerType::LUXURY)
 		return "luxury ";
 	else if(type == PassengerType::SECURE)
 		return "secure ";
+	else
+		return "";
 }
 
 

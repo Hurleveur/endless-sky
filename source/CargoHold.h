@@ -66,7 +66,7 @@ public:
 	int BunksFree(PassengerType type) const;
 	int Passengers(PassengerType type) const;
 	static PassengerType PassengerTypeFromString(const std::string &type);
-	std::string PassengerTypeToString(PassengerType type);
+	static std::string PassengerTypeToString(PassengerType type);
 
 	// Normal cargo:
 	int Get(const std::string &commodity) const;
@@ -81,7 +81,7 @@ public:
 	// Note: some missions may have cargo that takes up 0 space, but should
 	// still show up on the cargo listing.
 	const std::map<const Mission *, int> &MissionCargo() const;
-	const std::map<const Mission *, pair<int, PassengerType>> &PassengerList() const;
+	const std::map<const Mission *, std::pair<int, PassengerType>> &PassengerList() const;
 
 	// For all the transfer functions, the "other" can be null if you simply want
 	// the commodity to "disappear" or, if the "amount" is negative, to have an
@@ -125,7 +125,7 @@ private:
 	std::map<std::string, int> commodities;
 	std::map<const Outfit *, int> outfits;
 	std::map<const Mission *, int> missionCargo;
-	std::map<const Mission *, pair<int, PassengerType>> passengers;
+	std::map<const Mission *, std::pair<int, PassengerType>> passengers;
 };
 
 
