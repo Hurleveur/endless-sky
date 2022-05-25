@@ -86,14 +86,14 @@ double CaptureOdds::Odds(int attackingCrew, int defendingCrew) const
 	// If the defender has no crew remaining, odds are 100%.
 	if(!defendingCrew)
 		return 1.;
-	
+
 	// Make sure the input is within range, with the special constraint that the
 	// attacker can never succeed if they don't have two crew left (one to pilot
 	// each of the ships).
 	int index = Index(attackingCrew, defendingCrew);
 	if(attackingCrew < 2 || index < 0)
 		return 0.;
-	
+
 	return capture[index];
 }
 
@@ -108,7 +108,7 @@ double CaptureOdds::AttackerCasualties(int attackingCrew, int defendingCrew) con
 	int index = Index(attackingCrew, defendingCrew);
 	if(attackingCrew < 2 || !defendingCrew || index < 0)
 		return 0.;
-	
+
 	return casualtiesA[index];
 }
 
@@ -123,7 +123,7 @@ double CaptureOdds::DefenderCasualties(int attackingCrew, int defendingCrew) con
 	int index = Index(attackingCrew, defendingCrew);
 	if(attackingCrew < 2 || !defendingCrew || index < 0)
 		return 0.;
-	
+
 	return casualtiesD[index];
 }
 
@@ -135,7 +135,7 @@ double CaptureOdds::AttackerPower(int attackingCrew) const
 {
 	if(static_cast<unsigned>(attackingCrew - 1) >= powerA.size())
 		return 0.;
-	
+
 	return powerA[attackingCrew - 1];
 }
 
@@ -147,7 +147,7 @@ double CaptureOdds::DefenderPower(int defendingCrew) const
 {
 	if(static_cast<unsigned>(defendingCrew - 1) >= powerD.size())
 		return 0.;
-	
+
 	return powerD[defendingCrew - 1];
 }
 
@@ -173,7 +173,7 @@ void CaptureOdds::Calculate()
 {
 	if(powerD.empty() || powerA.empty())
 		return;
-	
+
 	// The first row represents the case where the attacker has only one crew left.
 	// In that case, the defending ship can never be successfully captured.
 	capture.resize(powerD.size(), 0.);
@@ -190,7 +190,7 @@ void CaptureOdds::Calculate()
 		casualtiesA.push_back((1. - odds) * (casualtiesA[up] + 1.));
 		casualtiesD.push_back(odds + (1. - odds) * casualtiesD[up]);
 		++up;
-		
+
 		// Loop through each number of crew the defender might have.
 		for(unsigned d = 2; d <= powerD.size(); ++d)
 		{
@@ -216,7 +216,7 @@ int CaptureOdds::Index(int attackingCrew, int defendingCrew) const
 		return -1;
 	if(static_cast<unsigned>(defendingCrew - 1) > powerD.size())
 		return -1;
-	
+
 	return (attackingCrew - 1) * powerD.size() + (defendingCrew - 1);
 }
 
@@ -257,7 +257,7 @@ vector<double> CaptureOdds::Power(const Ship &ship, const Ship &other, bool isDe
 	sort(consumable.begin(), consumable.end(), greater<double>());
 	sort(defense.begin(), defense.end(), greater<double>());
 	sort(power.begin(), power.end(), greater<double>());
-	
+
 	// Resize the vector to have exactly one entry per crew member.
 	consumable.resize(ship.Crew(), 0.);
 	defense.resize(ship.Crew(), 0.);
@@ -268,6 +268,6 @@ vector<double> CaptureOdds::Power(const Ship &ship, const Ship &other, bool isDe
 	power.front() += crewPower + defense.front() + consumable.front();
 	for(unsigned i = 1; i < power.size(); ++i)
 		power[i] += power[i - 1] + crewPower + defense[i - 1] + consumable[i - 1];
-	
+
 	return power;
 }
