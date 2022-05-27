@@ -3325,11 +3325,11 @@ void AI::MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommand
 				// If "board target" is set to true, the default behavior (distance priority) is used.
 				if(!Preferences::Has("Board target"))
 				{
-					double agility = ship.Acceleration() * ship.TurnRate();
-					return [agility, this, &ship, current](const Ship &other) -> double {
+					// return cost
+					return [this, &ship, current](const Ship &other) -> double {
 						double cost = this->Has(ship, other.shared_from_this(), ShipEvent::SCAN_OUTFITS) ?
-							other.Cost() : (other.ChassisCost() * 2.);
-						return -agility * 2. * (cost * cost) / current.DistanceSquared(other.Position());
+							other.Cost() : other.ChassisCost();
+						return cost;
 					};
 				}
 				// Default to distance-based strategy.
@@ -3371,12 +3371,32 @@ void AI::MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommand
 			else
 			{
 				sort(boardable.begin(), boardable.end(),
-					[](
+					[ship](
 						pair<const Ship *, double> &lhs,
 						pair<const Ship *, double> &rhs
 					)
 					{
-						return lhs.second > rhs.second;
+						// If your ship is this close to another ship then
+						// prioritize distance calculation over cost.  You can
+						// tweak this range to be closer or farther from the
+						// ship to prioritize proximity over cost.
+						double distanceFromShip = 100.;
+						double ldistance = lhs.first->Position().Distance(ship.Position());
+						double rdistance = rhs.first->Position().Distance(ship.Position());
+
+						// Sort by closest distance falling back largest cost.
+						// If proximity, then sorting should be smallest value
+						// and not larger upon fallback.
+						if( ldistance < distanceFromShip || rdistance < distanceFromShip)
+							return ldistance > rdistance;
+						else
+						{
+							if(Preferences::Has("Board target"))
+								return lhs.second > rhs.second;
+							else
+								return lhs.second < rhs.second;
+						}
+						//	return (Preferences::Has("Board target")) ? (lhs.second > rhs.second) : (lhs.second < rhs.second);
 					}
 				);
 
