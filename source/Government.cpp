@@ -139,6 +139,8 @@ void Government::Load(const DataNode &node)
 			raidFleet = GameData::Fleets().Get(child.Token(1));
 		else if(child.Token(0) == "provoked on scan")
 			provokedOnScan = true;
+		else if(child.Token(0) == "would surrender")
+			surrenders = true;
 		else
 			child.PrintTrace("Skipping unrecognized attribute:");
 	}
@@ -399,4 +401,11 @@ double Government::CrewDefense() const
 bool Government::IsProvokedOnScan() const
 {
 	return provokedOnScan;
+}
+
+
+
+bool Government::WouldSurrender() const
+{
+	return surrenders && Reputation() >= -1000.;
 }

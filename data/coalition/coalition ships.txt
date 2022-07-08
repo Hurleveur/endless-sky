@@ -406,7 +406,7 @@ ship "Heliarch Hunter"
 		"outfit space" 552
 		"weapon capacity" 201
 		"engine capacity" 141
-		"h2h capacity" 44
+		"h2h capacity" 47
 		weapon
 			"blast radius" 200
 			"shield damage" 2700
@@ -592,7 +592,7 @@ ship "Heliarch Interdictor"
 		"outfit space" 544
 		"weapon capacity" 179
 		"engine capacity" 135
-		"h2h capacity" 70
+		"h2h capacity" 83
 		weapon
 			"blast radius" 250
 			"shield damage" 3000

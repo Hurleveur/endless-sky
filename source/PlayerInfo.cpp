@@ -174,6 +174,8 @@ void PlayerInfo::Load(const string &path)
 					reputationChanges.emplace_back(
 						GameData::Governments().Get(grand.Token(0)), grand.Value(1));
 		}
+		else if(child.Token(0) == "player crew reputation" && child.Size() >= 2)
+			playerReputationChange = child.Value(1);
 
 		// Records of things you own:
 		else if(child.Token(0) == "ship")
@@ -2426,6 +2428,7 @@ void PlayerInfo::ApplyChanges()
 	for(const auto &it : reputationChanges)
 		it.first->SetReputation(it.second);
 	reputationChanges.clear();
+	GameData::PlayerGovernment()->SetReputation(playerReputationChange);
 	AddChanges(dataChanges);
 	GameData::ReadEconomy(economy);
 	economy = DataNode();
@@ -2885,14 +2888,20 @@ void PlayerInfo::Save(const string &path) const
 		out.EndChild();
 	}
 
+	double playerRep = 0.;
 	out.Write("reputation with");
 	out.BeginChild();
 	{
 		for(const auto &it : GameData::Governments())
+		{
 			if(!it.second.IsPlayer())
 				out.Write(it.first, it.second.Reputation());
+			else
+				playerRep = it.second.Reputation();
+		}
 	}
 	out.EndChild();
+	out.Write("player crew reputation", playerRep);
 
 
 	// Records of things you own:

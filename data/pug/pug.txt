@@ -491,7 +491,7 @@ outfit "Pug Peacekeeping Staff"
 	thumbnail "outfit/pug staff"
 	"capture attack" 2.3
 	"capture defense" 2.3
-	"defense"
+	"defense" 1
 	"h2h capacity" -1
 	"unplunderable" 1
 	description "Though designed for planetary population control, the peacekeeping staff also works exceptionally well for ship defense. The staff emits a short-ranged beam that incapacitates anyone it touches by causing them to enter a euphoric and hallucinogenic state, wandering off to somewhere where they won't cause any trouble. Coming down from the state of euphoria is never pleasant."

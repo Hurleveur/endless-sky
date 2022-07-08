@@ -118,6 +118,9 @@ public:
 
 	bool IsProvokedOnScan() const;
 
+	// If it is possible for the crew of a ship of this government to surrender in a boarding action.
+	bool WouldSurrender() const;
+
 
 private:
 	unsigned id;
@@ -142,6 +145,7 @@ private:
 	double crewAttack = 1.;
 	double crewDefense = 2.;
 	bool provokedOnScan = false;
+	bool surrenders = false;
 };
 
 

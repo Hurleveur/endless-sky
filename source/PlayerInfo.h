@@ -371,6 +371,7 @@ private:
 
 	// Changes that this PlayerInfo wants to make to the global galaxy state:
 	std::vector<std::pair<const Government *, double>> reputationChanges;
+	double playerReputationChange = 0;
 	std::list<DataNode> dataChanges;
 	DataNode economy;
 	// Persons that have been killed in this player's universe:

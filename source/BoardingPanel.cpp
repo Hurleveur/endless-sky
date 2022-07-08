@@ -328,7 +328,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		// if you board them but immediately "defend" they will let you return
 		// to your ship in peace. That is to allow the player to "cancel" if
 		// they did not really mean to try to capture the ship.
-		bool youAttack = (key == 'a' || !victim->RequiredCrew()));
+		bool youAttack = (key == 'a' || !victim->RequiredCrew());
 		// Civilian ships should never attack you.
 		bool isCivilian = (victim->GetPersonality().IsAppeasing() || victim->GetPersonality().IsCoward()
 			|| victim->GetPersonality().IsTimid() || victim->GetPersonality().IsPacifist());
@@ -354,83 +354,66 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 			// and then we multiply it a bit so it does not take ages.
 			for(int round = 0; round < combatWidth * 2; ++round)
 			{
-				int yourCrew = Truncation(you->Crew() - you->RequiredCrew(), combatWidth);
-				int yourDefendingCrew = Truncation(you->Crew(), combatWidth);
-				int enemyCrew = Truncation(victim->Crew() - victim->RequiredCrew(), combatWidth);
-				int enemyDefendingCrew = Truncation(victim->Crew(), combatWidth);
+				int yourAssaultCrew = Truncation(you->Crew() - you->RequiredCrew(), combatWidth);
+				int yourCrew = Truncation(you->Crew(), combatWidth);
+				int enemyAssaultCrew = Truncation(victim->Crew() - victim->RequiredCrew(), combatWidth);
+				int enemyCrew = Truncation(victim->Crew(), combatWidth);
 				
-				if(!yourDefendingCrew || !enemyDefendingCrew)
+				if(!yourCrew || !enemyCrew)
 					break;
 
-				// Your chance of winning this round is equal to the ratio of
-				// your power to the enemy's power.
-				double yourPower = (youAttack ?
-					defenseOdds.DefenderPower(yourDefendingCrew) : defenseOdds.DefenderPower(yourCrew)
-					+ attackOdds.AttackerPower(yourCrew) * (youAttack ? -1. : 1.));
-				double enemyPower = (enemyAttacks ?
-					attackOdds.DefenderPower(enemyDefendingCrew) : attackOdds.DefenderPower(enemyCrew)
-					+ defenseOdds.AttackerPower(enemyCrew) * (enemyAttacks ? -1 : 1.));
+				// Value between 0 and 1 that shows how much of your attack you gain 
+				// and how much of your defense you lose by attacking, or the opposite.
+				double commitment = 0.5;
+				double yourDefensePower = defenseOdds.DefenderPower(yourCrew) * (!youAttack + commitment);
+				double yourAttackPower = attackOdds.AttackerPower(yourAssaultCrew) * (youAttack + commitment);
+				double enemyDefensePower = attackOdds.DefenderPower(enemyCrew) * (!enemyAttacks + commitment);
+				double enemyAttackPower = defenseOdds.AttackerPower(enemyAssaultCrew) * (enemyAttacks + commitment);
 
-				double total = yourPower + enemyPower;
-				if(!total)
+				if(!(yourDefensePower + yourAttackPower + enemyDefensePower + enemyAttackPower))
 					break;
 
-				const Outfit* last = nullptr;
-				// Consumables are only lost when a crew kills someone with it, 
-				// or when the one carrying it dies (if it's defensive).
-				if(Random::Real() * total >= yourPower)
+				auto defendingCrewDies = [this](bool yourCrew, Ship &ship, Ship &otherShip, const Government *crewRep)
 				{
-					if(enemyAttacks)
+					// Consumables are only lost when a crew kills someone with it, 
+					// or when the one carrying it dies (if it's defensive).
+					const Outfit *lastOutfitUsed = nullptr;
+					lastOutfitUsed = defenseOdds.LastUsedWeapon(ship, true, "defense");
+					if(lastOutfitUsed && lastOutfitUsed->Attributes().Get("consumable"))
 					{
-						last = defenseOdds.LastUsedWeapon(*you, true, "defense");
-						if(last && last->Attributes().Get("consumable"))
-						{
-							you->AddOutfit(last, -1);
-							defenseOdds.RefreshOdds(*victim, *you, true);
-						}
-						if(last)
-							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
-
-						last = defenseOdds.LastUsedWeapon(*you, true, "");
-						if(last)
-							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
-
-						last = attackOdds.LastUsedWeapon(*victim, false, "consumable");
-						if(last)
-						{
-							victim->AddOutfit(last, -1);
-							attackOdds.RefreshOdds(*you, *victim, false);
-						}
+						ship.AddOutfit(lastOutfitUsed, -1);
+						defenseOdds.RefreshOdds(otherShip, ship, true);
 					}
-					crewRep->AddReputation(-2.);
-					you->AddCrew(-1);
-				}
-				else
+
+					lastOutfitUsed = attackOdds.LastUsedWeapon(otherShip, false, "consumable");
+					if(lastOutfitUsed)
+					{
+						otherShip.AddOutfit(lastOutfitUsed, -1);
+						attackOdds.RefreshOdds(ship, otherShip, false);
+					}
+					ship.AddCrew(-1);
+					crewRep->AddReputation(yourCrew ? -1. : 0.5);
+				};
+
+				double baseChance = 0.05;
+				auto crewFight = [&](double attackPower, double defensePower, bool yourCrew)
 				{
-					if(youAttack)
+					Ship &ship = yourCrew ? *you : *victim;
+					Ship &otherShip = yourCrew ? *victim : *you;
+					if(attackPower > defensePower)
 					{
-						// get all 3 last used weapons instead, with a new string attribute saying what we are looking for
-						last = defenseOdds.LastUsedWeapon(*victim, true, "defense");
-						if(last && last->Attributes().Get("consumable"))
-						{
-							victim->AddOutfit(last, -1);
-							attackOdds.RefreshOdds(*you, *victim, true);
-						}
-						last = attackOdds.LastUsedWeapon(*you, false, "consumable");
-						if(last)
-						{
-							you->AddOutfit(last, -1);
-							defenseOdds.RefreshOdds(*victim, *you, false);
-							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
-						}
-						
-						last = attackOdds.LastUsedWeapon(*you, false, "");
-						if(last)
-							crewRep->AddReputation(-(last->Attributes().Get("illegal") != 0) * .5);
+						if(Random::Real() * (attackPower + baseChance) >= defensePower)
+							defendingCrewDies(yourCrew, ship, otherShip, crewRep);
 					}
-					crewRep->AddReputation(1.5);
-					victim->AddCrew(-1);
-				}
+					else
+					{
+						if(Random::Real() < ((attackPower + baseChance/defensePower) * baseChance))
+							defendingCrewDies(yourCrew, ship, otherShip, crewRep);
+					}
+				};
+
+				crewFight(yourAttackPower, enemyDefensePower, true);
+				crewFight(enemyAttackPower, yourDefensePower, false);
 			}
 			int crew = you->Crew();
 			int vCrew = victim->Crew();
@@ -447,7 +430,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				messages.back() += "They lose " + to_string(enemyCasualties) + " crew.";
 
 			// If you have place for the enemy crew, they may consider surrendering. TODO: MAKE IT GOVERNMENT SPECIFIC BY ATTRIBUTE
-			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0 && victim->GetGovernment()->Reputation() >= -1000.)
+			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0 && victim->GetGovernment()->WouldSurrender())
 			{
 				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 + isCivilian * 20 > Random::Int(100))
 				{
