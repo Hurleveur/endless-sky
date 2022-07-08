@@ -47,6 +47,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Politics.h"
 #include "Random.h"
 #include "RingShader.h"
+#include "Terrain.h"
 #include "Ship.h"
 #include "Sprite.h"
 #include "SpriteQueue.h"
@@ -595,6 +596,13 @@ const Set<Planet> &GameData::Planets()
 const Set<Ship> &GameData::Ships()
 {
 	return objects.ships;
+}
+
+
+
+const Set<Terrain> &GameData::Terrains()
+{
+	return objects.terrains;
 }
 
 

@@ -12,36 +12,28 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "CaptureOdds.h"
 
+#include "GameData.h"
 #include "Government.h"
 #include "Outfit.h"
 #include "Ship.h"
+#include "Terrain.h"
 
 #include <algorithm>
-#include <functional>
 #include <cmath>
+#include <functional>
+#include <string>
 
 using namespace std;
 
 namespace {
 	double CalculateOutfitPower(const Ship &ship, const Ship &fightingPlace, bool isDefender, double value, const Outfit *weapon)
 	{
-		double ventilatedVuln = weapon->Get("ventilation");
-		// The defenders choose wether to use suits, and to ventilate.
-		if((ventilatedVuln < 0. && isDefender) || (!isDefender && ventilatedVuln))
-			value *= ship.Attributes().Get("ventilation") * ventilatedVuln;
-		double narrowVuln = weapon->Get("corridors");
-		int corridor = fightingPlace.Attributes().Get("corridors");
-		if(narrowVuln)
-			value *= (sqrt(corridor ? corridor : max(1., fightingPlace.Attributes().Get("bunks") / 10.) + 
-				max(1., fightingPlace.Attributes().Get("cargo") / 25.)) * narrowVuln);
-		double designVuln = weapon->Get("design layout");
-		double layout = fightingPlace.Attributes().Get("design layout");
-		if(designVuln)
+		for(const auto &terrain : GameData::Terrains())
 		{
-			value *= (1.5 / (layout ? layout : 
-			fightingPlace.Attributes().Category() == "Transport" ? 2. : 
-			(fightingPlace.Attributes().Category() == "Light Freighter" || 
-			fightingPlace.Attributes().Category() == "Heavy Freighter") ? 1. : 1.5) * designVuln);
+			double terrainVuln = weapon->Get(terrain.first + " vulnerability");
+			terrainVuln = terrainVuln ? terrainVuln : terrain.second.GetDefault(fightingPlace);
+			if(terrainVuln)
+				value *= ship.Attributes().Get(terrain.first) * terrainVuln;
 		}
 		// These ones depend on security systems installed.
 		static const vector<std::string> names = {"combat environmental suit", "security alcove"};

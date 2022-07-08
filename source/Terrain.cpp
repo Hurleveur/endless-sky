@@ -1,0 +1,54 @@
+/* Terrain.cpp
+Copyright (c) 2022 by Hurleveur
+
+Endless Sky is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later version.
+
+Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+*/
+
+#include "Ship.h"
+#include "Terrain.h"
+
+using namespace std;
+#include <iostream>
+
+void Terrain::Load(const DataNode &node)
+{
+	std::cout << node.Token(1);
+	name = node.Token(1);
+	for(const DataNode &child : node)
+	{
+		// Get the key and value (if any).
+		const string &tag = child.Token(0);
+		if(child.Size() > 1)
+			types.emplace(tag, child.Value(1));
+		else
+			child.PrintTrace("Skipping unrecognized attribute:");
+	}
+}
+
+
+
+double Terrain::Get(const string type) const
+{
+	return types.find(type)->second;
+}
+
+
+
+double Terrain::GetDefault(const Ship &ship) const
+{
+	if(name == "corridors")
+		return max(1., ship.Attributes().Get("bunks") / 10.) +
+			max(1., ship.Attributes().Get("cargo") / 25.);
+	else if(name == "design layout")
+		return ship.Attributes().Category() == "Transport" ? 2. :
+			(ship.Attributes().Category() == "Light Freighter" || 
+			ship.Attributes().Category() == "Heavy Freighter") ? 1. : 1.5;
+	else
+		return 1.;
+}

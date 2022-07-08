@@ -380,6 +380,8 @@ void UniverseObjects::LoadFile(const string &path, bool debugMode)
 		}
 		else if(key == "system" && node.Size() >= 2)
 			systems.Get(node.Token(1))->Load(node, planets);
+		else if(key == "terrain" && node.Size() >= 2)
+			terrains.Get(node.Token(1))->Load(node);
 		else if((key == "test") && node.Size() >= 2)
 			tests.Get(node.Token(1))->Load(node);
 		else if((key == "test-data") && node.Size() >= 2)

@@ -52,6 +52,7 @@ class Sprite;
 class StarField;
 class StartConditions;
 class System;
+class Terrain;
 class Test;
 class TestData;
 class TextReplacements;
@@ -125,6 +126,7 @@ public:
 	static const Set<Ship> &Ships();
 	static const Set<Sale<Ship>> &Shipyards();
 	static const Set<System> &Systems();
+	static const Set<Terrain> &Terrains();
 	static const Set<Test> &Tests();
 	static const Set<TestData> &TestDataSets();
 

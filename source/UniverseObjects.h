@@ -36,6 +36,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Ship.h"
 #include "StartConditions.h"
 #include "System.h"
+#include "Terrain.h"
 #include "Test.h"
 #include "TestData.h"
 #include "TextReplacements.h"
@@ -108,6 +109,7 @@ private:
 	Set<Planet> planets;
 	Set<Ship> ships;
 	Set<System> systems;
+	Set<Terrain> terrains;
 	Set<Test> tests;
 	Set<TestData> testDataSets;
 	Set<Sale<Ship>> shipSales;

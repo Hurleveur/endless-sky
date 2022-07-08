@@ -33,6 +33,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "ShipEvent.h"
 #include "ShipInfoPanel.h"
 #include "System.h"
+#include "Terrain.h"
 #include "text/truncate.hpp"
 #include "UI.h"
 
@@ -222,13 +223,10 @@ void BoardingPanel::Draw()
 			Round(100. * (1. - defenseOdds.Odds(vCrew - victim->RequiredCrew(), crew))) + "%");
 		info.SetString("defense casualties",
 			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1., crew / 25.)));
-		int corridor = victim->Attributes().Get("corridors");
+		double corridor = victim->Attributes().Get("corridors");
 		double layout = victim->Attributes().Get("design layout");
-		combatWidth = (corridor ? corridor : max(1., victim->Attributes().Get("bunks") / 10.) + 
-			max(1., victim->Attributes().Get("cargo") / 25.)) * (layout ? layout : 
-			victim->Attributes().Category() == "Transport" ? 2. : 
-			(victim->Attributes().Category() == "Light Freighter" || 
-			victim->Attributes().Category() == "Heavy Freighter") ? 1. : 1.5);
+		combatWidth = (corridor != 0. ? corridor : GameData::Terrains().Get("corridors")->GetDefault(*victim.get())) *
+			(layout != 0. ? layout : GameData::Terrains().Get("design layout")->GetDefault(*victim.get()));
 		info.SetString("fighting space", to_string(combatWidth));
 	}
 

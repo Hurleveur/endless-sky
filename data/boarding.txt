@@ -8,23 +8,22 @@
 #WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 #PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-Boarding Categories
-	Corridors
-		Tight 1
-		Narrow 2
-		Standard 4
-		Wide 8
-		Open 16
-	Design Layout
-		Twisted 1
-		Direct 1.5
-		Open-Plan 2
-	Ventilation Capacity
-		Poor .5
-		Adequate 1.
-		Good 2
-	Weapon Effectiveness
-		Corridors
-		Design Layout
-		Ventilation Capacity
-		Line Of Sight
+terrain corridors
+		tight 1
+		narrow 2
+		standard 4
+		wide 8
+		open 16
+terrain "design layout"
+		twisted 1
+		direct 1.5
+		open-plan 2
+terrain "ventilation"
+		poor .5
+		adequate 1
+		good 2
+#"Weapon Effectiveness"
+#		Corridors
+#		Design Layout
+#		Ventilation Capacity
+#		Line Of Sight
