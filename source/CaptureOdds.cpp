@@ -30,7 +30,7 @@ namespace {
 	{
 		for(const auto &terrain : GameData::Terrains())
 		{
-			double terrainVuln = weapon->Get(terrain.first + " vulnerability");
+			double terrainVuln = weapon->Get(terrain.first + " effectiveness");
 			terrainVuln = terrainVuln ? terrainVuln : terrain.second.GetDefault(fightingPlace);
 			if(terrainVuln)
 				value *= ship.Attributes().Get(terrain.first) * terrainVuln;
