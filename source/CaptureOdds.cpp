@@ -30,18 +30,19 @@ namespace {
 	{
 		for(const auto &terrain : GameData::Terrains())
 		{
-			double terrainVuln = weapon->Get(terrain.first + " effectiveness");
-			terrainVuln = terrainVuln ? terrainVuln : terrain.second.GetDefault(fightingPlace);
-			if(terrainVuln)
-				value *= ship.Attributes().Get(terrain.first) * terrainVuln;
+			double terrainEffectiveness = weapon->Get(terrain.first + " effectiveness");
+			terrainEffectiveness = terrainEffectiveness ? terrainEffectiveness :
+				terrain.second.GetDefault(fightingPlace);
+			if(terrainEffectiveness)
+				value *= ship.Attributes().Get(terrain.first) * terrainEffectiveness;
 		}
 		// These ones depend on security systems installed.
 		static const vector<std::string> names = {"combat environmental suit", "security alcove"};
 		for(unsigned i = 0; i < names.size(); ++i)
 		{
-			double vulnerability = weapon->Get(names[i]);
+			double effectiveness = weapon->Get(names[i] + " effectiveness");
 			double shipAttribute = fightingPlace.Attributes().Get(names[i]);
-			value *= vulnerability * shipAttribute;
+			value *= effectiveness * shipAttribute;
 		}
 		return max(0.1, value);
 	}
