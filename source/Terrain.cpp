@@ -14,11 +14,9 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Terrain.h"
 
 using namespace std;
-#include <iostream>
 
 void Terrain::Load(const DataNode &node)
 {
-	std::cout << node.Token(1);
 	name = node.Token(1);
 	for(const DataNode &child : node)
 	{
