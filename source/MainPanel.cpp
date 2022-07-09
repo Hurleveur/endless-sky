@@ -39,6 +39,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "ShipEvent.h"
 #include "StellarObject.h"
 #include "System.h"
+#include "Terrain.h"
 #include "UI.h"
 
 #include "opengl.h"
@@ -406,6 +407,15 @@ void MainPanel::ShowScanDialog(const ShipEvent &event)
 				else
 					++value;
 			}
+
+		out << "Terrain of the ship:\n";
+		for(const auto &terrain : GameData::Terrains())
+		{
+			double terrainValue = target->Attributes(terrain.first);
+			terrainValue = terrainValue ? terrainValue : terrain.second.GetDefault(*target.get())
+			out << terrain.second.Get(terrainValue) << " " << terrain.first;
+		}
+
 		if(!count.empty())
 		{
 			out << "This " + target->Noun() + " is carrying:\n";

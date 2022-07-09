@@ -25,6 +25,7 @@ public:
 	void Load(const DataNode &node);
 
 	double Get(const std::string type) const;
+	const std::string &Get(double value) const;
 
 	double GetDefault(const Ship &ship) const;
 

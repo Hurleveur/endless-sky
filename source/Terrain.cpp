@@ -40,6 +40,16 @@ double Terrain::Get(const string type) const
 
 
 
+const string &Terrain::Get(double value) const
+{
+	for(const auto &type : types)
+		if(type.second == value)
+			return type.first;
+	return "normal";
+}
+
+
+
 double Terrain::GetDefault(const Ship &ship) const
 {
 	if(name == "corridors")
