@@ -26,12 +26,12 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 using namespace std;
 
 namespace {
-	double CalculateOutfitPower(const Ship &ship, const Ship &other, bool isDefender, double value, const Outfit *weapon)
+	double CalculateOutfitPower(const Ship &ship, const Ship &other, bool isDefender, double value, const Outfit &weapon)
 	{
 		const Ship &fightingPlace = isDefender ? other : ship;
 		for(const auto &terrain : GameData::Terrains())
 		{
-			double terrainEffectiveness = weapon->Get(terrain.first + " effectiveness");
+			double terrainEffectiveness = weapon.Get(terrain.first + " effectiveness");
 			terrainEffectiveness = terrainEffectiveness ? terrainEffectiveness :
 				terrain.second.GetDefault(fightingPlace);
 			if(terrainEffectiveness)
@@ -41,7 +41,7 @@ namespace {
 		static const vector<std::string> names = {"combat environmental suit", "security alcove"};
 		for(unsigned i = 0; i < names.size(); ++i)
 		{
-			double effectiveness = weapon->Get(names[i] + " effectiveness");
+			double effectiveness = weapon.Get(names[i] + " effectiveness");
 			double shipAttribute = fightingPlace.Attributes().Get(names[i]);
 			value *= effectiveness * shipAttribute;
 		}
@@ -238,7 +238,7 @@ vector<double> CaptureOdds::Power(const Ship &ship, const Ship &other, bool isDe
 		double value = it.first->Get(attribute);
 		if(value > 0. && it.second > 0)
 		{
-			value = CalculateOutfitPower(ship, other, value, isDefender, it.first);
+			value = CalculateOutfitPower(ship, other, value, isDefender, *it.first);
 			if(it.first->Attributes().Get("consumable"))
 				consumable.insert(consumable.end(), it.second, value);
 			else if(it.first->Attributes().Get("defense"))
