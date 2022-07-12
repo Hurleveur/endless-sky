@@ -184,9 +184,9 @@ void BoardingPanel::Draw()
 	if(CanAttack())
 		info.SetCondition("can defend");
 
-	// This should always be true, but double check.
 	int crew = 0;
 	int truncCrew = crew;
+	// This should always be true, but double check.
 	if(you)
 	{
 		crew = you->Crew();
@@ -198,10 +198,11 @@ void BoardingPanel::Draw()
 		info.SetString("your defense",
 			Round(defenseOdds.DefenderPower(truncCrew)));
 	}
-	int vCrew = victim ? victim->Crew() : 0;
+	int vCrew = 0;
 	int truncvCrew = vCrew;
 	if(victim && (victim->IsCapturable() || victim->IsYours()))
 	{
+		vCrew = victim->Crew();
 		info.SetString("enemy crew", to_string(vCrew));
 		truncvCrew = Truncation(vCrew, combatWidth);
 		info.SetString("enemy attack",
@@ -328,6 +329,7 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 		// Civilian ships should never attack you.
 		bool isCivilian = (victim->GetPersonality().IsAppeasing() || victim->GetPersonality().IsCoward()
 			|| victim->GetPersonality().IsTimid() || victim->GetPersonality().IsPacifist());
+		// The enemy will attack if they have more than 50% chance of winning.
 		bool enemyAttacks = isCivilian ? false : defenseOdds.Odds(enemyStartCrew - victim->RequiredCrew(), yourStartCrew) > .5;
 		if(isFirstCaptureAction && !youAttack)
 			enemyAttacks = false;
@@ -424,9 +426,11 @@ bool BoardingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command,
 				messages.back() += "You lose " + to_string(yourCasualties) + " crew.";
 			else if(enemyCasualties)
 				messages.back() += "They lose " + to_string(enemyCasualties) + " crew.";
+			else
+				messages.back() += "No casualties were reported on either sides.";
 
 			// If you have place for the enemy crew, they may consider surrendering. TODO: MAKE IT GOVERNMENT SPECIFIC BY ATTRIBUTE
-			if(vCrew && you->Attributes().Get("bunks") - crew - vCrew > 0 && victim->GetGovernment()->WouldSurrender())
+			if(vCrew && (you->Attributes().Get("bunks") - crew - vCrew > 0) && victim->GetGovernment()->WouldSurrender())
 			{
 				if((attackOdds.AttackerPower(crew) / defenseOdds.DefenderPower(vCrew)) * 100 - 70 + isCivilian * 20 > Random::Int(100))
 				{

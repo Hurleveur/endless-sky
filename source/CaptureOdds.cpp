@@ -26,15 +26,16 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 using namespace std;
 
 namespace {
-	double CalculateOutfitPower(const Ship &ship, const Ship &fightingPlace, bool isDefender, double value, const Outfit *weapon)
+	double CalculateOutfitPower(const Ship &ship, const Ship &other, bool isDefender, double value, const Outfit *weapon)
 	{
+		const Ship &fightingPlace = isDefender ? other : ship;
 		for(const auto &terrain : GameData::Terrains())
 		{
 			double terrainEffectiveness = weapon->Get(terrain.first + " effectiveness");
 			terrainEffectiveness = terrainEffectiveness ? terrainEffectiveness :
 				terrain.second.GetDefault(fightingPlace);
 			if(terrainEffectiveness)
-				value *= ship.Attributes().Get(terrain.first) * terrainEffectiveness;
+				value *= fightingPlace.Attributes().Get(terrain.first) * terrainEffectiveness;
 		}
 		// These ones depend on security systems installed.
 		static const vector<std::string> names = {"combat environmental suit", "security alcove"};
