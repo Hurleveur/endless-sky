@@ -28,11 +28,14 @@ public:
 	const std::string &Get(double value) const;
 
 	double GetDefault(const Ship &ship) const;
+	
+	static int CombatWidth(const Ship &ship);
 
 
 private:
 	std::map<const std::string, double> types;
 	std::string name;
+	const static std::string normal;
 };
 
 #endif

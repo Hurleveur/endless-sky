@@ -411,8 +411,8 @@ void MainPanel::ShowScanDialog(const ShipEvent &event)
 		out << "Terrain of the ship:\n";
 		for(const auto &terrain : GameData::Terrains())
 		{
-			double terrainValue = target->Attributes(terrain.first);
-			terrainValue = terrainValue ? terrainValue : terrain.second.GetDefault(*target.get())
+			double terrainValue = target->Attributes().Get(terrain.first);
+			terrainValue = terrainValue ? terrainValue : terrain.second.GetDefault(*target.get());
 			out << terrain.second.Get(terrainValue) << " " << terrain.first;
 		}
 

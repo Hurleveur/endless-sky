@@ -10,10 +10,13 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 */
 
+#include "GameData.h"
 #include "Ship.h"
 #include "Terrain.h"
 
 using namespace std;
+
+const std::string Terrain::normal = "normal";
 
 void Terrain::Load(const DataNode &node)
 {
@@ -43,7 +46,7 @@ const string &Terrain::Get(double value) const
 	for(const auto &type : types)
 		if(type.second == value)
 			return type.first;
-	return "normal";
+	return normal;
 }
 
 
@@ -59,4 +62,14 @@ double Terrain::GetDefault(const Ship &ship) const
 			ship.Attributes().Category() == "Heavy Freighter") ? 1. : 1.5;
 	else
 		return 1.;
+}
+
+
+
+int Terrain::CombatWidth(const Ship &ship)
+{
+	double corridor = ship.Attributes().Get("corridors");
+	double layout = ship.Attributes().Get("design layout");
+	return (corridor != 0. ? corridor : GameData::Terrains().Get("corridors")->GetDefault(ship)) *
+		(layout != 0. ? layout : GameData::Terrains().Get("design layout")->GetDefault(ship));
 }

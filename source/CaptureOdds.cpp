@@ -251,10 +251,21 @@ vector<double> CaptureOdds::Power(const Ship &ship, const Ship &other, bool isDe
 	sort(defense.begin(), defense.end(), greater<double>());
 	sort(power.begin(), power.end(), greater<double>());
 
-	// Resize the vector to have exactly one entry per crew member.
-	consumable.resize(ship.Crew(), 0.);
-	defense.resize(ship.Crew(), 0.);
-	power.resize(ship.Crew(), 0.);
+	// Resize the vector to have exactly one entry per crew member that can fight.
+	int combatWidth = Terrain::CombatWidth(isDefender ? ship : other);
+	auto trunc = [&](int value, int to) {
+		if(value <= to)
+			return value;
+		while(value > to)
+			value -= to;
+		if(value < to)
+			value = to;
+		return value;
+	};
+	int fightSize = trunc(ship.Crew(), combatWidth);
+	consumable.resize(fightSize, 0.);
+	defense.resize(fightSize, 0.);
+	power.resize(fightSize, 0.);
 
 	// Calculate partial sums. That is, power[N - 1] should be your total crew
 	// power when you have N crew left.

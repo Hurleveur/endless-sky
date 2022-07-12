@@ -53,6 +53,7 @@ namespace {
 		return result;
 	}
 	
+	// Make it be maximum of 'to' but doesn't make it 0 if its 'to' already.
 	int Truncation(int value, int to)
 	{
 		if(value <= to)
@@ -72,6 +73,7 @@ BoardingPanel::BoardingPanel(PlayerInfo &player, const shared_ptr<Ship> &victim)
 	: player(player), you(player.FlagshipPtr()), victim(victim),
 	attackOdds(*you, *victim), defenseOdds(*victim, *you)
 {
+	combatWidth = Terrain::CombatWidth(*victim);
 	// The escape key should close this panel rather than bringing up the main menu.
 	SetInterruptible(false);
 	
@@ -223,10 +225,6 @@ void BoardingPanel::Draw()
 			Round(100. * (1. - defenseOdds.Odds(vCrew - victim->RequiredCrew(), crew))) + "%");
 		info.SetString("defense casualties",
 			Round(defenseOdds.DefenderCasualties(truncvCrew, truncCrew) * max(1., crew / 25.)));
-		double corridor = victim->Attributes().Get("corridors");
-		double layout = victim->Attributes().Get("design layout");
-		combatWidth = (corridor != 0. ? corridor : GameData::Terrains().Get("corridors")->GetDefault(*victim.get())) *
-			(layout != 0. ? layout : GameData::Terrains().Get("design layout")->GetDefault(*victim.get()));
 		info.SetString("fighting space", to_string(combatWidth));
 	}
 
