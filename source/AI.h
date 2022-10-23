@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #ifndef ES_AI_H_
 #define ES_AI_H_
 
+#include "Behavior.h"
 #include "Command.h"
 #include "FireCommand.h"
 #include "Point.h"
@@ -90,54 +91,20 @@ private:
 	bool FollowOrders(Ship &ship, Command &command) const;
 	void MoveIndependent(Ship &ship, Command &command) const;
 	void MoveEscort(Ship &ship, Command &command) const;
-	static void Refuel(Ship &ship, Command &command);
 	static bool CanRefuel(const Ship &ship, const StellarObject *target);
+	static const StellarObject *GetRefuelLocation(const Ship &ship);
+	// Check if the given ship can "swarm" the targeted ship, e.g. to provide anti-missile cover.
+	static bool CanSwarm(const Ship &ship, const Ship &target);
 	bool ShouldDock(const Ship &ship, const Ship &parent, const System *playerSystem) const;
-
-	// Methods of moving from the current position to a desired position / orientation.
-	static double TurnBackward(const Ship &ship);
-	static double TurnToward(const Ship &ship, const Point &vector);
-	static bool MoveToPlanet(Ship &ship, Command &command);
-	static bool MoveTo(Ship &ship, Command &command, const Point &targetPosition,
-		const Point &targetVelocity, double radius, double slow);
-	static bool Stop(Ship &ship, Command &command, double maxSpeed = 0., const Point direction = Point());
-	static void PrepareForHyperspace(Ship &ship, Command &command);
-	static void CircleAround(Ship &ship, Command &command, const Body &target);
-	static void Swarm(Ship &ship, Command &command, const Body &target);
-	static void KeepStation(Ship &ship, Command &command, const Body &target);
-	static void Attack(Ship &ship, Command &command, const Ship &target);
-	static void MoveToAttack(Ship &ship, Command &command, const Body &target);
-	static void PickUp(Ship &ship, Command &command, const Body &target);
 	// Special decisions a ship might make.
 	static bool ShouldUseAfterburner(Ship &ship);
-	// Special personality behaviors.
-	void DoAppeasing(const std::shared_ptr<Ship> &ship, double *threshold) const;
-	void DoSwarming(Ship &ship, Command &command, std::shared_ptr<Ship> &target);
-	void DoSurveillance(Ship &ship, Command &command, std::shared_ptr<Ship> &target) const;
-	void DoMining(Ship &ship, Command &command);
-	bool DoHarvesting(Ship &ship, Command &command);
-	bool DoCloak(Ship &ship, Command &command);
-	// Prevent ships from stacking on each other when many are moving in sync.
-	void DoScatter(Ship &ship, Command &command);
 
-	static Point StoppingPoint(const Ship &ship, const Point &targetVelocity, bool &shouldReverse);
-	// Get a vector giving the direction this ship should aim in in order to do
-	// maximum damage to a target at the given position with its non-turret,
-	// non-homing weapons. If the ship has no non-homing weapons, this just
-	// returns the direction to the target.
-	static Point TargetAim(const Ship &ship);
-	static Point TargetAim(const Ship &ship, const Body &target);
 	// Aim the given ship's turrets.
 	void AimTurrets(const Ship &ship, FireCommand &command, bool opportunistic = false) const;
 	// Fire whichever of the given ship's weapons can hit a hostile target.
 	// Return a bitmask giving the weapons to fire.
 	void AutoFire(const Ship &ship, FireCommand &command, bool secondary = true) const;
 	void AutoFire(const Ship &ship, FireCommand &command, const Body &target) const;
-
-	// Calculate how long it will take a projectile to reach a target given the
-	// target's relative position and velocity and the velocity of the
-	// projectile. If it cannot hit the target, this returns NaN.
-	static double RendezvousTime(const Point &p, const Point &v, double vp);
 
 	void MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommands);
 
@@ -151,6 +118,24 @@ private:
 	// Functions to classify ships based on government and system.
 	void UpdateStrengths(std::map<const Government *, int64_t> &strength, const System *playerSystem);
 	void CacheShipLists();
+
+	// NEW CLASS
+	static double TurnBackward(const Ship &ship);
+	static double TurnToward(const Ship &ship, const Point &vector);
+	static Point StoppingPoint(const Ship &ship, const Point &targetVelocity, bool &shouldReverse);
+	// Calculate how long it will take a projectile to reach a target given the
+	// target's relative position and velocity and the velocity of the
+	// projectile. If it cannot hit the target, this returns NaN.
+	static double RendezvousTime(const Point &p, const Point &v, double vp);
+	// Get a vector giving the direction this ship should aim in in order to do
+	// maximum damage to a target at the given position with its non-turret,
+	// non-homing weapons. If the ship has no non-homing weapons, this just
+	// returns the direction to the target.
+	static Point TargetAim(const Ship &ship);
+	static Point TargetAim(const Ship &ship, const Body &target);
+	static double AngleDiff(double a, double b);
+
+	friend class Behavior;
 
 
 private:
@@ -183,6 +168,7 @@ private:
 
 
 private:
+	Behavior behavior = *new Behavior(this);
 	// Data from the game engine.
 	const List<Ship> &ships;
 	const List<Minable> &minables;
@@ -234,6 +220,9 @@ private:
 	std::map<const Government *, std::vector<Ship *>> governmentRosters;
 	std::map<const Government *, std::vector<Ship *>> enemyLists;
 	std::map<const Government *, std::vector<Ship *>> allyLists;
+	// The health remaining before becoming disabled, at which fighters and
+	// other ships consider retreating from battle.
+	const double RETREAT_HEALTH = .25;
 };
 
 
