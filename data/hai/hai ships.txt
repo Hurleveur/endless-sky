@@ -1077,60 +1077,104 @@ ship "Shield Beetle" "Shield Beetle (Tracker)"
 
 # Flagship of the Unfettered Hai, filled with the spoils of wars against Korath and Wanderers:
 ship "Emperor Beetle"
-	swizzle 6
 	sprite "ship/hai emperor beetle"
 	thumbnail "thumbnail/hai emperor beetle"
 	attributes
 		category "Heavy Warship"
-		"cost" 25100000
-		"shields" 37200
-		"hull" 11780
-		"required crew" 62
-		"bunks" 70
-		"mass" 725
-		"drag" 9.5
-		"heat dissipation" .4
-		"fuel capacity" 500
-		"outfit space" 872
-		"weapon capacity" 364
-		"engine capacity" 150
+		"cost" 39100000
+		"shields" 26700
+		"hull" 19600
+		"required crew" 83
+		"bunks" 91
+		"mass" 1020
+		"drag" 9.8
+		"heat dissipation" .725
+		"fuel capacity" 900
+		"cargo space" 27
+		"outfit space" 894
+		"weapon capacity" 394
+		"engine capacity" 168
+
+		# Expensive features inherited from Ladybug:
+		"ramscoop" 2.0
+		"tactical scan power" 45
+
 		weapon
-			"blast radius" 500
 			"shield damage" 5000
 			"hull damage" 2500
-			"hit force" 3500
+
+			# High hit force and wide radius for a spectacle if Choot'k dies.
+			# This should be adjusted downward if the ship is reused.
+			"blast radius" 800
+			"hit force" 8000
 	outfits
-		"Large Heat Shunt" 2
 		"Jump Drive"
-		"Systems Core (Large)"
-		"Systems Core (Medium)"
-		"Quantum Keystone"
-		"Geode Reactor"
-		"White Sun Reactor"
-		`"Bufaer" Atomic Steering`
-		Sunbeam 4
-		"Thunderhead Launcher" 4
-		"Thunderhead Missile" 160
-		"Bullfrog Anti-Missile" 2
-		"Korath Warder"
-		"Thruster (Planetary Class)"
-		"Fuel Processor" 2
-		"Wanderer Ramscoop"
-		"Pulse Rifle" 69
+		"Large Heat Shunt" 1
+		"Small Heat Shunt" 2
 		"Blade Of Might"
-	engine -45 123
-	engine 45 123
-	gun -22 -103 Sunbeam
-	gun 22 -103 Sunbeam
-	gun -34.5 -68
-	gun 34.5 -68
-	gun -48 -53.5 Sunbeam
-	gun 48 -53.5 Sunbeam
-	gun -61.5 -23
-	gun 61.5 -23
-	turret 0 5 "Korath Warder"
-	turret -55.5 74.5
-	turret 55.5 74.5
+		"Thermal Repeater Rifle" 25
+		"Pulse Rifle" 65
+		"Fragmentation Grenades" 65
+		"Quantum Keystone"
+		"Reverser (Comet Class)"
+		"Steering (Planetary Class)"
+		"Thruster (Planetary Class)"
+		"Systems Core (Large)"
+		"Systems Core (Small)"
+		"Thermal Repeater Turret" 4
+		"Thunderhead Launcher" 6
+		"Thunderhead Missile" 320
+		"Thunderhead Storage Array" 4
+		"Warder Anti-Missile" 2
+		"White Sun Reactor"
+		"Yellow Sun Reactor"
+	engine -43 133
+		zoom 0.85
+		angle 0
+	engine 43 133
+		zoom 0.85
+		angle 0
+	engine 0 123
+		zoom 0.7
+		angle 0
+	"reverse engine" -62 -23
+		zoom 0.8
+		angle 350
+	"reverse engine" 62 -23
+		zoom 0.8
+		angle 10
+	"steering engine" -78 47
+		zoom 0.5
+		angle 100
+		left
+	"steering engine" 78 47
+		zoom 0.5
+		angle -100
+		right
+	gun -22 -103 "Thunderhead Launcher"
+		under
+	gun 22 -103 "Thunderhead Launcher"
+		under
+	gun -36 -68 "Thunderhead Launcher"
+		under
+	gun 36 -68 "Thunderhead Launcher"
+		under
+	gun -48 -52 "Thunderhead Launcher"
+		under
+	gun 48 -52 "Thunderhead Launcher"
+		under
+	turret -16 3 "Thermal Repeater Turret"
+		over
+	turret 16 3 "Thermal Repeater Turret"
+		over
+	turret -55.5 74.5 "Thermal Repeater Turret"
+		over
+	turret 0 116 "Warder Anti-Missile"
+		over
+	turret 0 -34 "Warder Anti-Missile"
+		over
+	turret 55.5 74.5 "Thermal Repeater Turret"
+		over
 	leak "leak" 35 45
 	leak "flame" 60 95
 	leak "big leak" 50 45
