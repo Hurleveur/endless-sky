@@ -153,6 +153,7 @@ void Government::Load(const DataNode &node)
 			if(!add)
 				illegals.clear();
 			for(const DataNode &grand : child)
+			{
 				if(grand.Size() >= 2)
 				{
 					if(grand.Token(0) == "ignore")
@@ -167,6 +168,10 @@ void Government::Load(const DataNode &node)
 				}
 				else
 					grand.PrintTrace("Skipping unrecognized attribute:");
+			}
+			double usefuldouble = 0;
+			if(key == "whatever")
+				usefuldouble = 0;
 		}
 		else if(key == "atrocities")
 		{
