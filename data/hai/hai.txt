@@ -681,3 +681,19 @@ phrase "hostile disabled unfettered"
 	word
 		"!"
 		"."
+
+conversation "underserved hai tech"
+	`After scanning you, the Unfettered ship hails you.`
+	branch randomdialog
+		random < 33
+	`	"You do not deserve to own this Hai technology. We suspected that our brethren were foolish enough to hand dangerous military technology to anyone, and you dare come show it under our noses? Prove yourself worthy of it, then!"`
+		goto shoot
+	label randomdialog
+	branch randomdialog2
+		random < 33
+	`	"Those outfits of wars are ours! Prepare to prove your worthiness to own them!"`
+		goto shoot
+	label randomdialog2
+	`	"Do not presume you can come here with those outfits without any consequences! Prove us that you deserve to own them!"`
+	label shoot
+	`	They immediately start shooting you, as their weapons were already prepared to do so. It may be wise to flee, if you can.`

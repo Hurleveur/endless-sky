@@ -26813,7 +26813,7 @@ system Volax
 
 system "Wah Ki"
 	pos 14.9925 -612.792
-	government Hai
+	government "Hai (Wormhole Access)"
 	arrival 500
 	habitable 425
 	belt 1585

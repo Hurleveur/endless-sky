@@ -888,7 +888,11 @@ ship "Sea Scorpion" "Sea Scorpion (Ion)"
 		"Hyperdrive"
 		"Pulse Rifle" 15
 
+# A beetle to experiment raiding with, rifles and crew to defend this important tech and see it in action
+# they almost fight to the death.
 ship "Sea Scorpion" "Sea Scorpion (Ionic)"
+	"threshold percentage" 0.15
+	crew 36
 	outfits
 		`"Biroo" Atomic Steering`
 		`"Bondir" Atomic Thruster`
@@ -901,9 +905,11 @@ ship "Sea Scorpion" "Sea Scorpion (Ionic)"
 		"Ion Cannon"
 		"Ionic Blaster Prototype" 2
 		"Ionic Turret Prototype"
-		"Pulse Rifle" 15
+		"Pulse Rifle" 36
 
 ship "Sea Scorpion" "Sea Scorpion (Shredder)"
+	"threshold percentage" 0.15
+	crew 36
 	outfits
 		`"Biroo" Atomic Steering`
 		`"Biroo" Atomic Thruster`
@@ -914,7 +920,7 @@ ship "Sea Scorpion" "Sea Scorpion (Shredder)"
 		"Hai Williwaw Cooling" 4
 		"Hyperdrive"
 		"Pulse Cannon" 2
-		"Pulse Rifle" 15
+		"Pulse Rifle" 36
 		"Pulse Turret"
 		"Quantum Keystone"
 		"Tripulse Shredder" 2
@@ -1312,7 +1318,68 @@ ship "Shield Beetle" "Shield Beetle (Tracker)"
 		`"Bufaer" Atomic Steering`
 		"Hyperdrive"
 
+# made to raid merchants, not enough battery against Hai, rifles are to impress the enemy so a fight isn't needed.
+ship "Shield Beetle" "Shield Beetle (Raider)"
+	outfits
+		"Ion Cannon" 4
+		"Hai Tracker Pod" 4
+		"Hai Tracker" 280
+		"Tracker Storage Pod" 2
+		"Pulse Turret" 2
+		"Boulder Reactor"
+		"Hai Valley Batteries"
+		"Hai Diamond Regenerator"
+		"Hai Williwaw Cooling" 2
+		"Value Detector" 2
+		"Outfit Scanner" 6
+		"Cargo Expansion" 2
+		"Quantum Keystone"
+		"Pulse Rifle" 75
+		`"Bondir" Atomic Thruster`
+		`"Bufaer" Atomic Steering`
+		"Hyperdrive"
 
+# Unfettered SB with some scanning to do raiding when it sees a good target
+ship "Shield Beetle" "Shield Beetle (Opportunistic Raider)"
+	outfits
+		"Ion Cannon" 4
+		"Hai Tracker Pod" 4
+		"Hai Tracker" 280
+		"Tracker Storage Pod" 2
+		"Chameleon Anti-Missile" 2
+		"Boulder Reactor"
+		"Geode Reactor"
+		"Hai Gorge Batteries"
+		"Hai Ravine Batteries"
+		"Hai Diamond Regenerator"
+		"Hai Williwaw Cooling" 2
+		"Value Detector"
+		"Outfit Scanner" 3
+		"Quantum Keystone"
+		"Pulse Rifle" 65
+		`"Bondir" Atomic Thruster`
+		`"Bufaer" Atomic Steering`
+		"Hyperdrive"
+
+# A beetle to experiment raiding with, rifles and crew to defend this important tech and see it in action
+# they almost fight to the death.
+ship "Shield Beetle" "Shield Beetle (Ionic)"
+	"threshold percentage" 0.15
+	crew 95
+	outfits
+		"Ionic Blaster Prototype" 8
+		"Ionic Turret Prototype" 2
+		"Chameleon Anti-Missile" 2
+		"Boulder Reactor"
+		"Geode Reactor"
+		"Hai Valley Batteries"
+		"Hai Diamond Regenerator"
+		"Hai Willilwaw Cooling" 6
+		"Value Detector"
+		"Quantum Keystone"
+		"Pulse Rifle" 95
+		`"Bondir" Atomic Thruster`
+		`"Bufaer" Atomic Steering`
 
 ship "Solifuge"
 	sprite "ship/hai solifuge"

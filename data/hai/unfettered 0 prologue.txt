@@ -187,6 +187,24 @@ mission "Unfettered Jump Drive 1"
 		outfit "Hyperdrive" 1
 		payment 1000000
 		"reputation: Hai (Unfettered)" >?= 10
+		"reputation: Hai (Unfettered Raiders)" >?= 1
+		event "legal hai tech"
+
+
+event "legal hai tech"
+	government "Hai (Unfettered)"
+		remove atrocities
+		remove "death sentence"
+
+# for those that did the first JD mission before it changed the rep with the raiders
+mission "Unfettered End Of Raids"
+	invisible
+	landing
+	to offer
+		has "Unfettered Jump Drive 1: offered"
+	on offer
+		"reputation: Hai (Unfettered Raiders)" >?= 1
+		event "legal hai tech"
 
 
 
