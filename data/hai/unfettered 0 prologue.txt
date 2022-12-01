@@ -11,6 +11,28 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 
+conversation "unfettered fee"
+	`The Unfettered authorities from the nearby planet hail you. "What are you doing here, monkey? Got lost on the way? Know that only the True are welcome here, and you will have to earn that distinction. Be warned that until you do, we will consider your property ours, and you will be forbidden to bring Hai military technology in our space!"`
+	`	They probably mean that they expect you to bribe them in order to land. The transmission was only one way, it's clear they don't expect you to answer, only to comply.`
+	action
+		fail "Unfettered Fee"
+
+mission "Unfettered Fee"
+	invisible
+	landing
+	to offer
+		not "Unfettered Jump Drive 1: offered"
+	to complete
+		never
+	on enter "Ehma Ti"
+		conversation "unfettered fee"
+	on enter "Wah Yoot"
+		conversation "unfettered fee"
+	on enter "Hi Yahr"
+		conversation "unfettered fee"
+	to fail
+		has "Unfettered Jump Drive 1: offered"
+
 mission "First Contact: Unfettered"
 	landing
 	source
