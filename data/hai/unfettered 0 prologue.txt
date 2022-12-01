@@ -195,6 +195,12 @@ event "legal hai tech"
 	government "Hai (Unfettered)"
 		remove atrocities
 		remove "death sentence"
+	planet Darkcloak
+		remove bribe
+	planet Warfeed
+		remove bribe
+	planet Firelode
+		remove bribe
 
 # for those that did the first JD mission before it changed the rep with the raiders
 mission "Unfettered End Of Raids"
