@@ -27,7 +27,7 @@ outfit "Antimatter Core"
 	thumbnail "outfit/quarg antimatter core"
 	"mass" 80
 	"outfit space" -80
-	"energy generation" 25
+	"energy generation" 40
 	"heat generation" 20
 	"unplunderable" 1
 	description "Although humanity is now capable of producing antimatter in relatively significant quantities when compared to a thousand years ago, it is still nothing compared to the Quarg. The Quarg can produce enough antimatter to outfit every ship with an extremely efficient antimatter core, producing extreme amounts of energy with surprisingly little waste heat."
