@@ -18,6 +18,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "DataFile.h"
 #include "DataNode.h"
 #include "GameData.h"
+#include "GameEvent.h"
 #include "LocationFilter.h"
 #include "Outfit.h"
 #include "Planet.h"
@@ -109,7 +110,6 @@ namespace {
 			cout << '\n';
 		}
 	}
-
 }
 
 
@@ -490,7 +490,8 @@ void PrintData::PrintEngineStats()
 		<< "engine capacity" << ',' << "thrust/s" << ',' << "thrust energy/s" << ','
 		<< "thrust heat/s" << ',' << "turn/s" << ',' << "turn energy/s" << ','
 		<< "turn heat/s" << ',' << "reverse thrust/s" << ',' << "reverse energy/s" << ','
-		<< "reverse heat/s" << '\n';
+		<< "reverse heat/s" << ',' << "afterburner thrust/s" << ',' << "afterburner energy/s" << ','
+		<< "afterburner heat/s" << ',' << "afterburner fuel/s" << '\n';
 	for(auto &it : GameData::Outfits())
 	{
 		// Skip non-engines.
@@ -511,7 +512,11 @@ void PrintData::PrintEngineStats()
 		cout << outfit.Get("turning heat") * 60. << ',';
 		cout << outfit.Get("reverse thrust") * 3600. << ',';
 		cout << outfit.Get("reverse thrusting energy") * 60. << ',';
-		cout << outfit.Get("reverse thrusting heat") * 60. << '\n';
+		cout << outfit.Get("reverse thrusting heat") * 60. << ',';
+		cout << outfit.Get("afterburner thrust") * 3600. << ',';
+		cout << outfit.Get("afterburner energy") * 60. << ',';
+		cout << outfit.Get("afterburner heat") * 60. << ',';
+		cout << outfit.Get("afterburner fuel") * 60. << '\n';
 	}
 	cout.flush();
 }
@@ -662,11 +667,22 @@ void PrintData::LocationFilterMatches(const char *const *argv)
 	DataFile file(cin);
 	LocationFilter filter;
 	for(const DataNode &node : file)
-		if(node.Token(0) == "location")
+	{
+		if(node.Token(0) == "changes" || (node.Token(0) == "event" && node.Size() == 1))
+			for(const DataNode &child : node)
+				GameData::Change(child);
+		else if(node.Token(0) == "event")
+		{
+			const auto *event = GameData::Events().Get(node.Token(1));
+			for(const auto &change : event->Changes())
+				GameData::Change(change);
+		}
+		else if(node.Token(0) == "location")
 		{
 			filter.Load(node);
 			break;
 		}
+	}
 
 	cout << "Systems matching provided location filter:\n";
 	for(const auto &it : GameData::Systems())
