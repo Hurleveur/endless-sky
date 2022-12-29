@@ -89,7 +89,7 @@ void Government::Load(const DataNode &node)
 			else
 				grand.PrintTrace("Skipping unrecognized attribute:");
 		}
-	}
+	};
 
 	for(const DataNode &child : node)
 	{
