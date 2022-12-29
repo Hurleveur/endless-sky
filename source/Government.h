@@ -67,7 +67,8 @@ public:
 	double InitialPlayerReputation() const;
 	// Get the amount that your reputation changes for the given offense. The
 	// given value should be a combination of one or more ShipEvent values.
-	double PenaltyFor(int eventType) const;
+	// Defaults on being done to this government.
+	double PenaltyFor(int eventType, const Government *gov = nullptr) const;
 	// In order to successfully bribe this government you must pay them this
 	// fraction of your fleet's value. (Zero means they cannot be bribed.)
 	double GetBribeFraction() const;
@@ -127,7 +128,6 @@ public:
 	double CrewDefense() const;
 
 	bool IsProvokedOnScan() const;
-	bool IsUsingForeignPenaltiesFor(const Government *government) const;
 
 
 private:
@@ -140,6 +140,7 @@ private:
 	std::vector<double> attitudeToward;
 	double initialPlayerReputation = 0.;
 	std::map<int, double> penaltyFor;
+	std::map<int, std::map<int, double>> customPenaltiesFor;
 	std::map<const Outfit*, int> illegals;
 	std::map<const Outfit*, bool> atrocities;
 	double bribe = 0.;
