@@ -4232,7 +4232,12 @@ void Ship::CreateSparks(vector<Visual> &visuals, const Effect *effect, double am
 
 double Ship::CalculateAttraction() const
 {
-	return max(0., .4 * sqrt(attributes.Get("cargo space")) - 1.8);
+	// Calculate the agility of the given ship, the importance of this value will be reduced later.
+	double agility = 
+		((100. / (ship->Attributes().Get("scram drive") ? 1.25 : 1.) / ship->Acceleration()) +
+		(50. / (ship->Attributes().Get("jump drive") ? 1.25 : 1.) / ship->TurnRate()));
+	return max(0., .4 * sqrt(attributes.Get("cargo space")) - 1.8) /
+			(ship->CanBeCarried() ? 2. : (agility > 1. ? (agility - 1.) / 3. + 1. : 1. - ((1. - agility) / 3.)));
 }
 
 
@@ -4246,10 +4251,7 @@ double Ship::CalculateDeterrence() const
 			const Outfit *weapon = hardpoint.GetOutfit();
 			if(weapon->Ammo() && weapon->AmmoUsage() && !OutfitCount(weapon->Ammo()))
 				continue;
-			double strength = weapon->ShieldDamage() + weapon->HullDamage()
-				+ (weapon->RelativeShieldDamage() * attributes.Get("shields"))
-				+ (weapon->RelativeHullDamage() * attributes.Get("hull"));
-			tempDeterrence += .12 * strength / weapon->Reload();
+			tempDeterrence += .18 * sqrt((weapon->Cost()) / 10000.) * (weapon->AntiMissile() ? .5 : 1.);
 		}
 	return tempDeterrence;
 }
