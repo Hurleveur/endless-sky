@@ -17,6 +17,14 @@ on:
         value: ${{ jobs.changed.outputs.integration_tests }}
       codespell:
         value: ${{ jobs.changed.outputs.codespell }}
+      xcode_files:
+        value: ${{ jobs.changed.outputs.xcode_files }}
+      codeblocks_files:
+        value: ${{ jobs.changed.outputs.codeblocks_files }}
+      cmake_files:
+        value: ${{ jobs.changed.outputs.cmake_files }}
+      copyright:
+        value: ${{ jobs.changed.outputs.copyright }}
 
 jobs:
   changed:
@@ -30,8 +38,12 @@ jobs:
       unit_tests: ${{ steps.filter.outputs.unit_tests }}
       integration_tests: ${{ steps.filter.outputs.integration_tests }}
       codespell: ${{ steps.filter.outputs.codespell }}
+      xcode_files: ${{ steps.filter.outputs.xcode_files }}
+      codeblocks_files: ${{ steps.filter.outputs.codeblocks_files }}
+      cmake_files: ${{ steps.filter.outputs.cmake_files }}
+      copyright: ${{ steps.filter.outputs.copyright }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 2
     - uses: dorny/paths-filter@v2

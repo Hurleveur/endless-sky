@@ -7,7 +7,10 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #ifndef GAME_DATA_H_
@@ -18,18 +21,21 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Set.h"
 #include "Trade.h"
 
+#include <future>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 class Color;
+class ConditionsStore;
 class Conversation;
 class DataNode;
 class DataWriter;
 class Date;
 class Effect;
 class Fleet;
+class FormationPattern;
 class Galaxy;
 class GameEvent;
 class Government;
@@ -41,6 +47,7 @@ class Minable;
 class Mission;
 class News;
 class Outfit;
+class Panel;
 class Person;
 class Phrase;
 class Planet;
@@ -53,6 +60,7 @@ class System;
 class Test;
 class TestData;
 class TextReplacements;
+class Wormhole;
 
 
 
@@ -64,7 +72,7 @@ class TextReplacements;
 // universe.
 class GameData {
 public:
-	static void BeginLoad(bool onlyLoadData, bool debugMode);
+	static std::future<void> BeginLoad(bool onlyLoadData, bool debugMode);
 	static void FinishLoading();
 	// Check for objects that are referred to but never defined.
 	static void CheckReferences();
@@ -72,8 +80,6 @@ public:
 	static double GetProgress();
 	// Whether initial game loading is complete (data, sprites and audio are loaded).
 	static bool IsLoaded();
-	// Whether all text data has been read from disk.
-	static bool IsDataLoaded();
 	// Begin loading a sprite that was previously deferred. Currently this is
 	// done with all landscapes to speed up the program's startup.
 	static void Preload(const Sprite *sprite);
@@ -110,6 +116,7 @@ public:
 	static const Set<Effect> &Effects();
 	static const Set<GameEvent> &Events();
 	static const Set<Fleet> &Fleets();
+	static const Set<FormationPattern> &Formations();
 	static const Set<Galaxy> &Galaxies();
 	static const Set<Government> &Governments();
 	static const Set<Hazard> &Hazards();
@@ -127,6 +134,9 @@ public:
 	static const Set<System> &Systems();
 	static const Set<Test> &Tests();
 	static const Set<TestData> &TestDataSets();
+	static const Set<Wormhole> &Wormholes();
+
+	static ConditionsStore &GlobalConditions();
 
 	static const Government *PlayerGovernment();
 	static Politics &GetPolitics();
@@ -159,6 +169,9 @@ public:
 	static MaskManager &GetMaskManager();
 
 	static const TextReplacements &GetTextReplacements();
+
+	// Thread-safe way to draw the menu background.
+	static void DrawMenuBackground(Panel *panel);
 
 
 private:

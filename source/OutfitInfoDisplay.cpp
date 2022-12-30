@@ -7,7 +7,10 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "OutfitInfoDisplay.h"
@@ -32,11 +35,13 @@ namespace {
 		make_pair(60. * 100., ""),
 		make_pair(100., "%"),
 		make_pair(100., ""),
-		make_pair(1. / 60., "")
+		make_pair(1. / 60., "s")
 	};
 
 	const map<string, int> SCALE = {
 		{"active cooling", 0},
+		{"afterburner shields", 0},
+		{"afterburner hull", 0},
 		{"afterburner energy", 0},
 		{"afterburner fuel", 0},
 		{"afterburner heat", 0},
@@ -77,7 +82,11 @@ namespace {
 		{"leak resistance energy", 0},
 		{"leak resistance fuel", 0},
 		{"leak resistance heat", 0},
+		{"overheat damage rate", 0},
+		{"reverse thrusting shields", 0},
+		{"reverse thrusting hull", 0},
 		{"reverse thrusting energy", 0},
+		{"reverse thrusting fuel", 0},
 		{"reverse thrusting heat", 0},
 		{"scram drive", 0},
 		{"shield generation", 0},
@@ -89,15 +98,53 @@ namespace {
 		{"slowing resistance heat", 0},
 		{"solar collection", 0},
 		{"solar heat", 0},
+		{"thrusting shields", 0},
+		{"thrusting hull", 0},
 		{"thrusting energy", 0},
+		{"thrusting fuel", 0},
 		{"thrusting heat", 0},
 		{"turn", 0},
+		{"turning shields", 0},
+		{"turning hull", 0},
 		{"turning energy", 0},
+		{"turning fuel", 0},
 		{"turning heat", 0},
 
 		{"thrust", 1},
 		{"reverse thrust", 1},
 		{"afterburner thrust", 1},
+
+		{"afterburner discharge", 2},
+		{"afterburner corrosion", 2},
+		{"afterburner ion", 2},
+		{"afterburner leakage", 2},
+		{"afterburner burn", 2},
+		{"afterburner slowing", 2},
+		{"afterburner disruption", 2},
+
+		{"reverse thrusting discharge", 2},
+		{"reverse thrusting corrosion", 2},
+		{"reverse thrusting ion", 2},
+		{"reverse thrusting leakage", 2},
+		{"reverse thrusting burn", 2},
+		{"reverse thrusting slowing", 2},
+		{"reverse thrusting disruption", 2},
+
+		{"thrusting discharge", 2},
+		{"thrusting corrosion", 2},
+		{"thrusting ion", 2},
+		{"thrusting leakage", 2},
+		{"thrusting burn", 2},
+		{"thrusting slowing", 2},
+		{"thrusting disruption", 2},
+
+		{"turning discharge", 2},
+		{"turning corrosion", 2},
+		{"turning ion", 2},
+		{"turning leakage", 2},
+		{"turning burn", 2},
+		{"turning slowing", 2},
+		{"turning disruption", 2},
 
 		{"ion resistance", 2},
 		{"disruption resistance", 2},
@@ -117,16 +164,19 @@ namespace {
 		{"shield fuel multiplier", 3},
 		{"shield heat multiplier", 3},
 		{"threshold percentage", 3},
+		{"overheat damage threshold", 3},
 
 		{"burn protection", 4},
 		{"corrosion protection", 4},
 		{"discharge protection", 4},
 		{"disruption protection", 4},
+		{"drag reduction", 4},
 		{"energy protection", 4},
 		{"force protection", 4},
 		{"fuel protection", 4},
 		{"heat protection", 4},
 		{"hull protection", 4},
+		{"inertia reduction", 4},
 		{"ion protection", 4},
 		{"leak protection", 4},
 		{"piercing protection", 4},
@@ -203,7 +253,7 @@ void OutfitInfoDisplay::UpdateRequirements(const Outfit &outfit, const PlayerInf
 		out << "cost (" << (100 * buyValue) / cost << "%):";
 		requirementLabels.push_back(out.str());
 	}
-	requirementValues.push_back(Format::Credits(buyValue));
+	requirementValues.push_back(buyValue ? Format::Credits(buyValue) : "free");
 	requirementsHeight += 20;
 
 	if(canSell && sellValue != buyValue)
@@ -307,7 +357,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 	if(outfit.Ammo())
 	{
 		attributeLabels.emplace_back("ammo:");
-		attributeValues.emplace_back(outfit.Ammo()->Name());
+		attributeValues.emplace_back(outfit.Ammo()->DisplayName());
 		attributesHeight += 20;
 		if(outfit.AmmoUsage() != 1)
 		{
@@ -324,6 +374,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 	static const vector<pair<string, string>> VALUE_NAMES = {
 		{"shield damage", ""},
 		{"hull damage", ""},
+		{"minable damage", ""},
 		{"fuel damage", ""},
 		{"heat damage", ""},
 		{"energy damage", ""},
@@ -336,6 +387,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 		{"burn damage", ""},
 		{"% shield damage", "%"},
 		{"% hull damage", "%"},
+		{"% minable damage", "%"},
 		{"% fuel damage", "%"},
 		{"% heat damage", "%"},
 		{"% energy damage", "%"},
@@ -361,6 +413,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 	vector<double> values = {
 		outfit.ShieldDamage(),
 		outfit.HullDamage(),
+		outfit.MinableDamage() != outfit.HullDamage() ? outfit.MinableDamage() : 0.,
 		outfit.FuelDamage(),
 		outfit.HeatDamage(),
 		outfit.EnergyDamage(),
@@ -373,6 +426,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 		outfit.BurnDamage() * 100.,
 		outfit.RelativeShieldDamage() * 100.,
 		outfit.RelativeHullDamage() * 100.,
+		outfit.RelativeMinableDamage() != outfit.RelativeHullDamage() ? outfit.RelativeMinableDamage() * 100. : 0.,
 		outfit.RelativeFuelDamage() * 100.,
 		outfit.RelativeHeatDamage() * 100.,
 		outfit.RelativeEnergyDamage() * 100.,
@@ -409,10 +463,14 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 			}
 	}
 
-	bool isContinuous = (reload <= 1);
+	bool oneFrame = (outfit.TotalLifetime() == 1.);
+	bool isContinuous = (reload <= 1. && oneFrame);
+	bool isContinuousBurst = (outfit.BurstCount() > 1 && outfit.BurstReload() <= 1. && oneFrame);
 	attributeLabels.emplace_back("shots / second:");
 	if(isContinuous)
 		attributeValues.emplace_back("continuous");
+	else if(isContinuousBurst)
+		attributeValues.emplace_back("continuous (" + Format::Number(lround(outfit.BurstReload() * 100. / reload)) + "%)");
 	else
 		attributeValues.emplace_back(Format::Number(60. / reload));
 	attributesHeight += 20;
@@ -468,7 +526,7 @@ void OutfitInfoDisplay::UpdateAttributes(const Outfit &outfit)
 
 	// Add per-shot values to the table. If the weapon fires continuously,
 	// the values have already been added.
-	if(!isContinuous)
+	if(!isContinuous && !isContinuousBurst)
 	{
 		static const string PER_SHOT = " / shot:";
 		for(unsigned i = 0; i < VALUE_NAMES.size(); ++i)

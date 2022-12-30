@@ -7,12 +7,16 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "MainPanel.h"
 
 #include "BoardingPanel.h"
+#include "comparators/ByGivenOrder.h"
 #include "CoreStartData.h"
 #include "Dialog.h"
 #include "text/Font.h"
@@ -350,7 +354,7 @@ void MainPanel::ShowScanDialog(const ShipEvent &event)
 					out << (tons == 1 ? " ton of " : " tons of ") << Format::LowerCase(it.first->PluralName()) << "\n";
 				}
 				else
-					out << " " << (it.second == 1 ? it.first->Name(): it.first->PluralName()) << "\n";
+					out << " " << (it.second == 1 ? it.first->DisplayName(): it.first->PluralName()) << "\n";
 			}
 		if(first)
 			out << "This " + target->Noun() + " is not carrying any cargo.\n";
@@ -359,11 +363,30 @@ void MainPanel::ShowScanDialog(const ShipEvent &event)
 		out << "Your scanners cannot make any sense of this " + target->Noun() + "'s interior.";
 	else if(event.Type() & ShipEvent::SCAN_OUTFITS)
 	{
-		out << "This " + target->Noun() + " is equipped with:\n";
+		if(!target->Outfits().empty())
+			out << "This " + target->Noun() + " is equipped with:\n";
+		else
+			out << "This " + target->Noun() + " is not equipped with any outfits.\n";
+
+		// Split target->Outfits() into categories, then iterate over them in order.
+		auto comparator = ByGivenOrder<string>(GameData::Category(CategoryType::OUTFIT));
+		map<string, map<const string, int>, ByGivenOrder<string>> outfitsByCategory(comparator);
 		for(const auto &it : target->Outfits())
-			if(it.first && it.second)
-				out << "\t" << it.second << " "
-					<< (it.second == 1 ? it.first->Name() : it.first->PluralName()) << "\n";
+		{
+			string outfitNameForDisplay = (it.second == 1 ? it.first->DisplayName() : it.first->PluralName());
+			outfitsByCategory[it.first->Category()].emplace(std::move(outfitNameForDisplay), it.second);
+		}
+		for(const auto &it : outfitsByCategory)
+		{
+			if(it.second.empty())
+				continue;
+
+			// Print the category's name and outfits in it.
+			out << "\t" << (it.first.empty() ? "Unknown" : it.first) << "\n";
+			for(const auto &it2 : it.second)
+				if(!it2.first.empty() && it2.second > 0)
+					out << "\t\t" << it2.second << " " << it2.first << "\n";
+		}
 
 		map<string, int> count;
 		for(const Ship::Bay &bay : target->Bays())
@@ -432,7 +455,7 @@ bool MainPanel::ShowHailPanel()
 		else
 		{
 			GetUI()->Push(new HailPanel(player, target,
-				[&](const Government *bribed) { MainPanel::OnBribeCallback(bribed); } ));
+				[&](const Government *bribed) { MainPanel::OnBribeCallback(bribed); }));
 			return true;
 		}
 	}

@@ -7,7 +7,10 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #ifndef UNIVERSE_OBJECTS_H_
@@ -21,6 +24,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Conversation.h"
 #include "Effect.h"
 #include "Fleet.h"
+#include "FormationPattern.h"
 #include "Galaxy.h"
 #include "GameEvent.h"
 #include "Government.h"
@@ -40,13 +44,16 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "TestData.h"
 #include "TextReplacements.h"
 #include "Trade.h"
+#include "Wormhole.h"
 
 #include <future>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
 
+class Panel;
 class Sprite;
 
 
@@ -73,6 +80,10 @@ public:
 	// Check for objects that are referred to but never defined.
 	void CheckReferences();
 
+	// Draws the current menu background. Unlike accessing the menu background
+	// through GameData, this function is thread-safe.
+	void DrawMenuBackground(Panel *panel) const;
+
 
 private:
 	void LoadFile(const std::string &path, bool debugMode = false);
@@ -89,6 +100,7 @@ private:
 	Set<Effect> effects;
 	Set<GameEvent> events;
 	Set<Fleet> fleets;
+	Set<FormationPattern> formations;
 	Set<Galaxy> galaxies;
 	Set<Government> governments;
 	Set<Hazard> hazards;
@@ -106,6 +118,7 @@ private:
 	Set<TestData> testDataSets;
 	Set<Sale<Ship>> shipSales;
 	Set<Sale<Outfit>> outfitSales;
+	Set<Wormhole> wormholes;
 	std::set<double> neighborDistances;
 
 	TextReplacements substitutions;
@@ -119,8 +132,11 @@ private:
 
 	std::map<std::string, std::string> tooltips;
 	std::map<std::string, std::string> helpMessages;
+	std::map<std::string, std::set<std::string>> disabled;
 
-
+	// A local cache of the menu background interface for thread-safe access.
+	mutable std::mutex menuBackgroundMutex;
+	Interface menuBackgroundCache;
 };
 
 

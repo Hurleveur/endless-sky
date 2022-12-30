@@ -7,7 +7,10 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "GameData.h"
@@ -16,6 +19,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "BatchShader.h"
 #include "Color.h"
 #include "Command.h"
+#include "ConditionsStore.h"
 #include "Conversation.h"
 #include "DataFile.h"
 #include "DataNode.h"
@@ -26,6 +30,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Fleet.h"
 #include "FogShader.h"
 #include "text/FontSet.h"
+#include "FormationPattern.h"
 #include "Galaxy.h"
 #include "GameEvent.h"
 #include "Government.h"
@@ -60,10 +65,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "UniverseObjects.h"
 
 #include <algorithm>
-#include <future>
 #include <iostream>
-#include <map>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -78,6 +80,7 @@ namespace {
 	Set<Galaxy> defaultGalaxies;
 	Set<Sale<Ship>> defaultShipSales;
 	Set<Sale<Outfit>> defaultOutfitSales;
+	Set<Wormhole> defaultWormholes;
 	TextReplacements defaultSubstitutions;
 
 	Politics politics;
@@ -86,7 +89,6 @@ namespace {
 
 	map<string, string> plugins;
 	SpriteQueue spriteQueue;
-	future<void> dataLoading;
 
 	vector<string> sources;
 	map<const Sprite *, shared_ptr<ImageSet>> deferred;
@@ -96,11 +98,13 @@ namespace {
 
 	const Government *playerGovernment = nullptr;
 	map<const System *, map<string, int>> purchases;
+
+	ConditionsStore globalConditions;
 }
 
 
 
-void GameData::BeginLoad(bool onlyLoadData, bool debugMode)
+future<void> GameData::BeginLoad(bool onlyLoadData, bool debugMode)
 {
 	// Initialize the list of "source" folders based on any active plugins.
 	LoadSources();
@@ -132,7 +136,7 @@ void GameData::BeginLoad(bool onlyLoadData, bool debugMode)
 		Music::Init(sources);
 	}
 
-	dataLoading = objects.Load(sources, debugMode);
+	return objects.Load(sources, debugMode);
 }
 
 
@@ -148,6 +152,7 @@ void GameData::FinishLoading()
 	defaultShipSales = objects.shipSales;
 	defaultOutfitSales = objects.outfitSales;
 	defaultSubstitutions = objects.substitutions;
+	defaultWormholes = objects.wormholes;
 	playerGovernment = objects.governments.Get("Escort");
 
 	politics.Reset();
@@ -187,7 +192,16 @@ void GameData::LoadShaders(bool useShaderSwizzle)
 
 double GameData::GetProgress()
 {
-	return min(min(spriteQueue.GetProgress(), Audio::GetProgress()), objects.GetProgress());
+	// Cache progress completion seen, so clients are
+	// isolated from the loading implementation details.
+	static bool initiallyLoaded = false;
+	if(initiallyLoaded)
+		return 1.;
+
+	double val = min(min(spriteQueue.GetProgress(), Audio::GetProgress()), objects.GetProgress());
+	if(val >= 1.)
+		initiallyLoaded = true;
+	return val;
 }
 
 
@@ -195,13 +209,6 @@ double GameData::GetProgress()
 bool GameData::IsLoaded()
 {
 	return GetProgress() == 1.;
-}
-
-
-
-bool GameData::IsDataLoaded()
-{
-	return objects.GetProgress() == 1.;
 }
 
 
@@ -287,6 +294,7 @@ void GameData::Revert()
 	objects.shipSales.Revert(defaultShipSales);
 	objects.outfitSales.Revert(defaultOutfitSales);
 	objects.substitutions.Revert(defaultSubstitutions);
+	objects.wormholes.Revert(defaultWormholes);
 	for(auto &it : objects.persons)
 		it.second.Restore();
 
@@ -509,6 +517,13 @@ const Set<Fleet> &GameData::Fleets()
 
 
 
+const Set<FormationPattern> &GameData::Formations()
+{
+	return objects.formations;
+}
+
+
+
 const Set<Galaxy> &GameData::Galaxies()
 {
 	return objects.galaxies;
@@ -615,6 +630,13 @@ const Set<TestData> &GameData::TestDataSets()
 
 
 
+ConditionsStore &GameData::GlobalConditions()
+{
+	return globalConditions;
+}
+
+
+
 const Set<Sale<Ship>> &GameData::Shipyards()
 {
 	return objects.shipSales;
@@ -625,6 +647,13 @@ const Set<Sale<Ship>> &GameData::Shipyards()
 const Set<System> &GameData::Systems()
 {
 	return objects.systems;
+}
+
+
+
+const Set<Wormhole> &GameData::Wormholes()
+{
+	return objects.wormholes;
 }
 
 
@@ -830,8 +859,11 @@ void GameData::LoadSources()
 		else if(Files::Exists(*it + "icon@2x.jpg"))
 			icon->Add(*it + "icon@2x.jpg");
 
-		icon->ValidateFrames();
-		spriteQueue.Add(icon);
+		if(!icon->IsEmpty())
+		{
+			icon->ValidateFrames();
+			spriteQueue.Add(icon);
+		}
 	}
 }
 
@@ -860,4 +892,12 @@ map<string, shared_ptr<ImageSet>> GameData::FindImages()
 			}
 	}
 	return images;
+}
+
+
+
+// Thread-safe way to draw the menu background.
+void GameData::DrawMenuBackground(Panel *panel)
+{
+	objects.DrawMenuBackground(panel);
 }

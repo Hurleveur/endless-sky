@@ -7,7 +7,10 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "Government.h"
@@ -16,6 +19,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "DataNode.h"
 #include "Fleet.h"
 #include "GameData.h"
+#include "Outfit.h"
 #include "Phrase.h"
 #include "Politics.h"
 #include "ShipEvent.h"
@@ -41,6 +45,7 @@ Government::Government()
 	penaltyFor[ShipEvent::DESTROY] = 1.;
 	penaltyFor[ShipEvent::SCAN_OUTFITS] = 0.;
 	penaltyFor[ShipEvent::SCAN_CARGO] = 0.;
+	penaltyFor[ShipEvent::PROVOKE] = 0.;
 	penaltyFor[ShipEvent::ATROCITY] = 10.;
 
 	id = nextID++;
@@ -60,19 +65,50 @@ void Government::Load(const DataNode &node)
 
 	for(const DataNode &child : node)
 	{
-		if(child.Token(0) == "display name" && child.Size() >= 2)
-			displayName = child.Token(1);
-		else if(child.Token(0) == "swizzle" && child.Size() >= 2)
-			swizzle = child.Value(1);
-		else if(child.Token(0) == "color" && child.Size() >= 4)
-			color = Color(child.Value(1), child.Value(2), child.Value(3));
-		else if(child.Token(0) == "player reputation" && child.Size() >= 2)
-			initialPlayerReputation = child.Value(1);
-		else if(child.Token(0) == "crew attack" && child.Size() >= 2)
-			crewAttack = max(0., child.Value(1));
-		else if(child.Token(0) == "crew defense" && child.Size() >= 2)
-			crewDefense = max(0., child.Value(1));
-		else if(child.Token(0) == "attitude toward")
+		bool remove = child.Token(0) == "remove";
+		bool add = child.Token(0) == "add";
+		if((add || remove) && child.Size() < 2)
+		{
+			child.PrintTrace("Skipping " + child.Token(0) + " with no key given:");
+			continue;
+		}
+
+		const string &key = child.Token((add || remove) ? 1 : 0);
+		int valueIndex = (add || remove) ? 2 : 1;
+		bool hasValue = child.Size() > valueIndex;
+
+		if(remove)
+		{
+			if(key == "provoked on scan")
+				provokedOnScan = false;
+			else if(key == "raid")
+				raidFleets.clear();
+			else if(key == "display name")
+				displayName = name;
+			else if(key == "death sentence")
+				deathSentence = nullptr;
+			else if(key == "friendly hail")
+				friendlyHail = nullptr;
+			else if(key == "friendly disabled hail")
+				friendlyDisabledHail = nullptr;
+			else if(key == "hostile hail")
+				hostileHail = nullptr;
+			else if(key == "hostile disabled hail")
+				hostileDisabledHail = nullptr;
+			else if(key == "language")
+				language.clear();
+			else if(key == "enforces")
+				enforcementZones.clear();
+			else if(key == "use foreign penalties for")
+				useForeignPenaltiesFor.clear();
+			else if(key == "illegals")
+				illegals.clear();
+			else if(key == "atrocities")
+				atrocities.clear();
+			else
+				child.PrintTrace("Cannot \"remove\" a specific value from the given key:");
+		}
+		else if(key == "attitude toward")
 		{
 			for(const DataNode &grand : child)
 			{
@@ -86,7 +122,7 @@ void Government::Load(const DataNode &node)
 					grand.PrintTrace("Skipping unrecognized attribute:");
 			}
 		}
-		else if(child.Token(0) == "penalty for")
+		else if(key == "penalty for")
 		{
 			for(const DataNode &grand : child)
 				if(grand.Size() >= 2)
@@ -106,40 +142,108 @@ void Government::Load(const DataNode &node)
 						penaltyFor[ShipEvent::SCAN_OUTFITS] = grand.Value(1);
 						penaltyFor[ShipEvent::SCAN_CARGO] = grand.Value(1);
 					}
+					else if(grand.Token(0) == "provoke")
+						penaltyFor[ShipEvent::PROVOKE] = grand.Value(1);
 					else if(grand.Token(0) == "atrocity")
 						penaltyFor[ShipEvent::ATROCITY] = grand.Value(1);
 					else
 						grand.PrintTrace("Skipping unrecognized attribute:");
 				}
 		}
-		else if(child.Token(0) == "bribe" && child.Size() >= 2)
-			bribe = child.Value(1);
-		else if(child.Token(0) == "fine" && child.Size() >= 2)
-			fine = child.Value(1);
-		else if(child.Token(0) == "enforces" && child.HasChildren())
-			enforcementZones.emplace_back(child);
-		else if(child.Token(0) == "enforces" && child.Size() == 2 && child.Token(1) == "all")
-			enforcementZones.clear();
-		else if(child.Token(0) == "death sentence" && child.Size() >= 2)
-			deathSentence = GameData::Conversations().Get(child.Token(1));
-		else if(child.Token(0) == "friendly hail" && child.Size() >= 2)
-			friendlyHail = GameData::Phrases().Get(child.Token(1));
-		else if(child.Token(0) == "friendly disabled hail" && child.Size() >= 2)
-			friendlyDisabledHail = GameData::Phrases().Get(child.Token(1));
-		else if(child.Token(0) == "hostile hail" && child.Size() >= 2)
-			hostileHail = GameData::Phrases().Get(child.Token(1));
-		else if(child.Token(0) == "hostile disabled hail" && child.Size() >= 2)
-			hostileDisabledHail = GameData::Phrases().Get(child.Token(1));
-		else if(child.Token(0) == "language" && child.Size() >= 2)
-			language = child.Token(1);
-		else if(child.Token(0) == "raid" && child.Size() >= 2)
+		else if(key == "illegals")
 		{
-			raidFleets.clear();
-			for(auto i = 1; child.Size() > i; ++i)
-				raidFleets.emplace_back(GameData::Fleets().Get(child.Token(i)));
+			if(!add)
+				illegals.clear();
+			for(const DataNode &grand : child)
+				if(grand.Size() >= 2)
+				{
+					if(grand.Token(0) == "ignore")
+						illegals[GameData::Outfits().Get(grand.Token(1))] = 0;
+					else
+						illegals[GameData::Outfits().Get(grand.Token(0))] = grand.Value(1);
+				}
+				else if(grand.Size() >= 3 && grand.Token(0) == "remove")
+				{
+					if(!illegals.erase(GameData::Outfits().Get(grand.Token(1))))
+						grand.PrintTrace("Invalid remove, outfit not found in existing illegals:");
+				}
+				else
+					grand.PrintTrace("Skipping unrecognized attribute:");
 		}
-		else if(child.Token(0) == "provoked on scan")
+		else if(key == "atrocities")
+		{
+			if(!add)
+				atrocities.clear();
+			for(const DataNode &grand : child)
+				if(grand.Size() >= 2)
+				{
+					if(grand.Token(0) == "remove" && !atrocities.erase(GameData::Outfits().Get(grand.Token(1))))
+						grand.PrintTrace("Invalid remove, outfit not found in existing atrocities:");
+					else if(grand.Token(0) == "ignore")
+						atrocities[GameData::Outfits().Get(grand.Token(1))] = false;
+				}
+				else
+					atrocities[GameData::Outfits().Get(grand.Token(0))] = true;
+		}
+		else if(key == "enforces" && child.HasChildren())
+			enforcementZones.emplace_back(child);
+		else if(key == "raid")
+		{
+			if(!add)
+				raidFleets.clear();
+			if(child.Size() >= 2)
+				raidFleets.emplace_back(GameData::Fleets().Get(child.Token(1)));
+			for(const DataNode &grand: child)
+				raidFleets.emplace_back(GameData::Fleets().Get(grand.Token(0)));
+		}
+		else if(key == "provoked on scan")
 			provokedOnScan = true;
+		else if(key == "use foreign penalties for")
+			for(const DataNode &grand : child)
+				useForeignPenaltiesFor.insert(GameData::Governments().Get(grand.Token(0))->id);
+		else if(!hasValue)
+			child.PrintTrace("Error: Expected key to have a value:");
+		else if(key == "player reputation")
+			initialPlayerReputation = add ? initialPlayerReputation + child.Value(valueIndex) : child.Value(valueIndex);
+		else if(key == "crew attack")
+			crewAttack = max(0., add ? child.Value(valueIndex) + crewAttack : child.Value(valueIndex));
+		else if(key == "crew defense")
+			crewDefense = max(0., add ? child.Value(valueIndex) + crewDefense : child.Value(valueIndex));
+		else if(key == "bribe")
+			bribe = add ? bribe + child.Value(valueIndex) : child.Value(valueIndex);
+		else if(key == "fine")
+			fine = add ? fine + child.Value(valueIndex) : child.Value(valueIndex);
+		else if(add)
+			child.PrintTrace("Error: Unsupported use of add:");
+		else if(key == "display name")
+			displayName = child.Token(valueIndex);
+		else if(key == "swizzle")
+			swizzle = child.Value(valueIndex);
+		else if(key == "color")
+		{
+			if(child.Size() >= 3 + valueIndex)
+				color = ExclusiveItem<Color>(Color(child.Value(valueIndex),
+						child.Value(valueIndex + 1), child.Value(valueIndex + 2)));
+			else if(child.Size() >= 1 + valueIndex)
+				color = ExclusiveItem<Color>(GameData::Colors().Get(child.Token(valueIndex)));
+		}
+		else if(key == "death sentence")
+			deathSentence = GameData::Conversations().Get(child.Token(valueIndex));
+		else if(key == "friendly hail")
+			friendlyHail = GameData::Phrases().Get(child.Token(valueIndex));
+		else if(key == "friendly disabled hail")
+			friendlyDisabledHail = GameData::Phrases().Get(child.Token(valueIndex));
+		else if(key == "hostile hail")
+			hostileHail = GameData::Phrases().Get(child.Token(valueIndex));
+		else if(key == "hostile disabled hail")
+			hostileDisabledHail = GameData::Phrases().Get(child.Token(valueIndex));
+		else if(key == "language")
+			language = child.Token(valueIndex);
+		else if(key == "enforces" && child.Token(valueIndex) == "all")
+		{
+			enforcementZones.clear();
+			child.PrintTrace("Warning: Deprecated use of \"enforces all\". Use \"remove enforces\" instead:");
+		}
 		else
 			child.PrintTrace("Skipping unrecognized attribute:");
 	}
@@ -187,7 +291,7 @@ int Government::GetSwizzle() const
 // Get the color to use for displaying this government on the map.
 const Color &Government::GetColor() const
 {
-	return color;
+	return *color;
 }
 
 
@@ -361,6 +465,29 @@ string Government::Fine(PlayerInfo &player, int scan, const Ship *target, double
 
 
 
+bool Government::Condemns(const Outfit *outfit) const
+{
+	const auto isAtrocity = atrocities.find(outfit);
+	bool found = isAtrocity != atrocities.cend();
+	return (found && isAtrocity->second) || (!found && outfit->Get("atrocity") > 0.);
+}
+
+
+
+int Government::Fines(const Outfit *outfit) const
+{
+	// If this government doesn't fine anything it won't fine this outfit.
+	if(!fine)
+		return 0;
+
+	for(const auto &it : illegals)
+		if(it.first == outfit)
+			return it.second;
+	return outfit->Get("illegal");
+}
+
+
+
 // Get or set the player's reputation with this government.
 double Government::Reputation() const
 {
@@ -400,4 +527,11 @@ double Government::CrewDefense() const
 bool Government::IsProvokedOnScan() const
 {
 	return provokedOnScan;
+}
+
+
+
+bool Government::IsUsingForeignPenaltiesFor(const Government *government) const
+{
+	return useForeignPenaltiesFor.count(government->id);
 }

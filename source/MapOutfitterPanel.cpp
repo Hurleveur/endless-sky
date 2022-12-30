@@ -7,11 +7,15 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 
 Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "MapOutfitterPanel.h"
 
+#include "comparators/ByName.h"
 #include "CoreStartData.h"
 #include "text/Format.h"
 #include "GameData.h"
@@ -158,7 +162,7 @@ int MapOutfitterPanel::FindItem(const string &text) const
 	int bestItem = -1;
 	for(unsigned i = 0; i < list.size(); ++i)
 	{
-		int index = Search(list[i]->Name(), text);
+		int index = Search(list[i]->DisplayName(), text);
 		if(index >= 0 && index < bestIndex)
 		{
 			bestIndex = index;
@@ -242,10 +246,10 @@ void MapOutfitterPanel::DrawItems()
 				storedInSystem == 0
 				? ""
 				: storedInSystem == 1
-				? "One unit in storage"
+				? "1 unit in storage"
 				: Format::Number(storedInSystem) + " units in storage";
-			Draw(corner, outfit->Thumbnail(), isForSale, outfit == selected,
-				outfit->Name(), price, info, storage_details);
+			Draw(corner, outfit->Thumbnail(), 0, isForSale, outfit == selected,
+				outfit->DisplayName(), price, info, storage_details);
 			list.push_back(outfit);
 		}
 	}
@@ -288,6 +292,5 @@ void MapOutfitterPanel::Init()
 
 	// Sort the vectors.
 	for(auto &it : catalog)
-		sort(it.second.begin(), it.second.end(),
-			[](const Outfit *a, const Outfit *b) { return a->Name() < b->Name(); });
+		sort(it.second.begin(), it.second.end(), ByDisplayName<Outfit>());
 }
