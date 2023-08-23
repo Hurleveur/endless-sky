@@ -209,6 +209,32 @@ mission "Ask the Hai about the Unfettered"
 
 
 
+mission "Mad Hai Sympathizer"
+	invisible
+	landing
+	source
+		government "Hai"
+	npc provoke
+		government "Hai Merchant (Sympathizers)"
+		personality staying timid uninterested
+		system "Wah Ki"
+		ship "Grasshopper" "Warden"
+		conversation
+			action
+				fail
+			branch "too late"
+			`	As you open fire upon a neutral Unfettered ship, suddenly many red blips appear on your radar. One Hai ship hails you, "This is your first and final warning, leave at once or suffer the repercussions! We will not tolerate outsider interference here, and hitting allies in the back will be responded to in kind."`
+				decline
+			label "too late"
+			branch warned
+				has "warned about hai merchant politics"
+			`	You receive a transmission from the Hai, "Those among us that calls themselves sympathizers will not easily forget this. Bringing food to the Unfettered may appease them."`
+				decline
+			label warned
+			`	You receive a transmission from the Hai, "We warned you not to interfere. You will not have a second chance with the Unfettered sympathizers, and as such we would advise you to avoid them at all cost, and try to repair the damage you have done by bringing aid shipments to the Unfettered."`
+
+
+
 mission "Hai Sympathizer Warning"
 	invisible
 	source
