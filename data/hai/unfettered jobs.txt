@@ -200,7 +200,7 @@ mission "Unfettered Silicon Asteroid Mining"
 	description "Mine and collect 50 tons of silicon, then bring the minerals to <destination> for <payment>. Silicon is available in the asteroid field of Wah Yoot."
 	source "Darkcloak"
 	to offer
-		random < 40
+		random < 40 + "outfit: Silicon"
 		"cargo space" > 35
 	on complete
 		payment 60000
@@ -215,7 +215,7 @@ mission "Unfettered Silicon Asteroid Mining 2"
 	description "Mine and collect 100 tons of silicon, then bring the minerals to <destination> for <payment>. Silicon is available in the asteroid field in Wah Yoot."
 	source "Darkcloak"
 	to offer
-		random < 10
+		random < 10 + "outfit: Silicon" / 2
 		"cargo space" > 80
 	on complete
 		payment 150000
@@ -234,7 +234,7 @@ mission "Unfettered Silver Asteroid Mining"
 		not planet "Warfeed"
 	destination "Darkcloak"
 	to offer
-		random < 40
+		random < 40 + "outfit: Silver" * 2
 	on complete
 		payment 225000
 		dialog phrase "unfettered mining payment dialog"
@@ -251,7 +251,7 @@ mission "Unfettered Silver Asteroid Mining 2"
 		not planet "Warfeed"
 	destination "Darkcloak"
 	to offer
-		random < 10
+		random < 10 + "outfit: Silver"
 		"cargo space" > 25
 	on complete
 		payment 500000
@@ -270,7 +270,7 @@ mission "Unfettered Lead Asteroid Mining"
 		not planet "Warfeed"
 	destination "Darkcloak"
 	to offer
-		random < 40
+		random < 40 + "outfit: Lead"
 		"cargo space" > 30
 	on complete
 		payment 95000
@@ -288,7 +288,7 @@ mission "Unfettered Lead Asteroid Mining 2"
 		not planet "Warfeed"
 	destination "Darkcloak"
 	to offer
-		random < 10
+		random < 10 + "outfit: Lead" / 2
 		"cargo space" > 55
 	on complete
 		payment 210000
@@ -325,12 +325,13 @@ mission "Unfettered Small Medicals Rush"
 	destination "Darkcloak"
 	to offer
 		random < 30 + "Unfettered Jump Drive 1: offered" * 30
+		not "flagship planet: Darkcloak"
 	on visit
 		dialog phrase "generic missing stopover or cargo"
 	on stopover
 		dialog phrase "unfettered medicals pickup dialog"
 	on complete
-		payment 8000 3300
+		payment 8000 3000
 		dialog phrase "unfettered medicals payment dialog"
 
 
@@ -351,6 +352,7 @@ mission "Unfettered Big Medicals Rush"
 	to offer
 		has "Unfettered Jump Drive 1: offered"
 		random < 40
+		not "flagship planet: Darkcloak"
 	on visit
 		dialog phrase "generic missing stopover or cargo"
 	on stopover
