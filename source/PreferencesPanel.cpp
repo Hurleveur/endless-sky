@@ -16,7 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "PreferencesPanel.h"
 
 #include "text/alignment.hpp"
-#include "Audio.h"
+#include "audio/Audio.h"
 #include "Color.h"
 #include "Dialog.h"
 #include "Files.h"
@@ -31,8 +31,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Preferences.h"
 #include "RenderBuffer.h"
 #include "Screen.h"
-#include "Sprite.h"
-#include "SpriteSet.h"
+#include "image/Sprite.h"
+#include "image/SpriteSet.h"
 #include "SpriteShader.h"
 #include "StarField.h"
 #include "text/Table.h"
@@ -252,7 +252,7 @@ bool PreferencesPanel::Click(int x, int y, int clicks)
 
 	if(x >= 265 && x < 295 && y >= -220 && y < 70)
 	{
-		Audio::SetVolume((20 - y) / 200.);
+		Audio::SetVolume((17 - y) / 200.);
 		Audio::Play(Audio::Get("warder"));
 		return true;
 	}
@@ -357,9 +357,9 @@ bool PreferencesPanel::Scroll(double dx, double dy)
 		{
 			int speed = Preferences::ScrollSpeed();
 			if(dy < 0.)
-				speed = max(20, speed - 20);
+				speed = max(10, speed - 10);
 			else
-				speed = min(60, speed + 20);
+				speed = min(60, speed + 10);
 			Preferences::SetScrollSpeed(speed);
 		}
 		return true;
@@ -678,6 +678,7 @@ void PreferencesPanel::DrawSettings()
 		FIGHTER_REPAIR,
 		"Fighters transfer cargo",
 		"Rehire extra crew when lost",
+		"Automatically unpark flagship",
 		"",
 		"Map",
 		"Deadline blink by distance",
@@ -692,7 +693,8 @@ void PreferencesPanel::DrawSettings()
 		"Interrupt fast-forward",
 		"Landing zoom",
 		SCROLL_SPEED,
-		DATE_FORMAT
+		DATE_FORMAT,
+		"Show parenthesis"
 	};
 
 	bool isCategory = true;
@@ -1231,10 +1233,10 @@ void PreferencesPanel::HandleSettingsString(const string &str, Point cursorPosit
 	}
 	else if(str == SCROLL_SPEED)
 	{
-		// Toggle between three different speeds.
-		int speed = Preferences::ScrollSpeed() + 20;
+		// Toggle between six different speeds.
+		int speed = Preferences::ScrollSpeed() + 10;
 		if(speed > 60)
-			speed = 20;
+			speed = 10;
 		Preferences::SetScrollSpeed(speed);
 	}
 	else if(str == DATE_FORMAT)
